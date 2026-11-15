@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF121316</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="sos_red">#FFFF1744</color>
+    <color name="sos_red_dark">#FFD50000</color>
+    <color name="tactical_amber">#FFFF9100</color>
+    <color name="mesh_green">#FF00E676</color>
+    <color name="mesh_dark_bg">#FF0D0E11</color>
+    <color name="mesh_surface">#FF1A1D24</color>
+    <color name="mesh_surface_variant">#FF262B35</color>
+</resources>
