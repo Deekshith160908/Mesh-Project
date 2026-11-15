@@ -3,9 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Off-Grid SOS Mesh - Live Multi-Device Command Center</title>
-  
-  <!-- PWA & Mobile Web App Manifest -->
+  <title>Off-Grid SOS Mesh — Live Multi-Device Command Center</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" type="image/svg+xml" href="./icon-192.svg">
   <link rel="apple-touch-icon" href="./icon-192.svg">
@@ -14,1354 +12,1077 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="SOS Mesh">
-  
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
   <style>
-    @keyframes radarSweep {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    @keyframes pulseRing {
-      0% { transform: scale(0.95); opacity: 0.8; }
-      50% { transform: scale(1.2); opacity: 0.2; }
-      100% { transform: scale(0.95); opacity: 0.8; }
-    }
-    @keyframes strobeFlash {
-      0%, 100% { background-color: rgba(255, 23, 68, 0.05); }
-      50% { background-color: rgba(255, 23, 68, 0.45); }
-    }
-    @keyframes hapticShake {
-      0%, 100% { transform: translate(0, 0); }
-      15% { transform: translate(-4px, 3px); }
-      30% { transform: translate(4px, -3px); }
-      45% { transform: translate(-3px, -2px); }
-      60% { transform: translate(3px, 2px); }
-      75% { transform: translate(-2px, 3px); }
-      90% { transform: translate(2px, -1px); }
-    }
-    @keyframes packetPulse {
-      0% { stroke-dashoffset: 40; }
-      100% { stroke-dashoffset: 0; }
-    }
-    .radar-beam {
-      animation: radarSweep 3s linear infinite;
-    }
-    .pulse-outer {
-      animation: pulseRing 1.6s ease-in-out infinite;
-    }
-    .strobe-active {
-      animation: strobeFlash 0.3s ease-in-out infinite;
-    }
-    .haptic-shake {
-      animation: hapticShake 0.4s ease-in-out infinite;
-    }
-    .mesh-link-active {
-      stroke-dasharray: 6 6;
-      animation: packetPulse 0.8s linear infinite;
-    }
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #0f1115;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #2a303c;
-      border-radius: 4px;
-    }
+    @keyframes radarSweep { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+    @keyframes pulseRing  { 0%,100%{transform:scale(0.95);opacity:.8} 50%{transform:scale(1.22);opacity:.15} }
+    @keyframes strobeFlash{ 0%,100%{background-color:rgba(255,23,68,.05)} 50%{background-color:rgba(255,23,68,.46)} }
+    @keyframes hapticShake{ 0%,100%{transform:translate(0,0)} 15%{transform:translate(-5px,3px)} 30%{transform:translate(5px,-3px)} 45%{transform:translate(-3px,-2px)} 60%{transform:translate(3px,2px)} 75%{transform:translate(-2px,3px)} 90%{transform:translate(2px,-1px)} }
+    @keyframes packetPulse{ 0%{stroke-dashoffset:40} 100%{stroke-dashoffset:0} }
+    .radar-beam   { animation: radarSweep 3s linear infinite }
+    .pulse-outer  { animation: pulseRing  1.6s ease-in-out infinite }
+    .strobe-active{ animation: strobeFlash 0.3s ease-in-out infinite }
+    .haptic-shake { animation: hapticShake 0.4s ease-in-out infinite }
+    .mesh-link-active{ stroke-dasharray:6 6; animation:packetPulse 0.8s linear infinite }
+    ::-webkit-scrollbar{ width:6px; height:6px }
+    ::-webkit-scrollbar-track{ background:#0f1115 }
+    ::-webkit-scrollbar-thumb{ background:#2a303c; border-radius:4px }
   </style>
 </head>
 <body class="bg-[#0a0c10] text-gray-100 font-sans min-h-screen p-2 md:p-6 select-none">
 
-  <!-- TOP HEADER & SIMULATION CONTROLS -->
-  <header class="max-w-7xl mx-auto mb-4 bg-[#131722] border border-[#232936] rounded-xl p-4 shadow-2xl">
-    <div class="flex flex-col lg:flex-row items-center justify-between gap-4">
-      
-      <!-- Brand & Status -->
-      <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-xl bg-red-600/20 border border-red-500/50 flex items-center justify-center text-red-500 font-black text-2xl shadow-lg">
-          ⚡
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <h1 class="font-black tracking-wider text-white text-lg md:text-xl">OFF-GRID SOS MESH</h1>
-            <span class="bg-red-500/20 text-red-400 border border-red-500/30 text-[10px] font-mono px-2 py-0.5 rounded-full font-bold">MULTI-NODE COMMAND CENTER</span>
-          </div>
-          <p class="text-xs text-gray-400 font-mono">P2P Cluster Network (Offline GPS + Haptics + Sirens + Multi-Node Google Maps)</p>
-        </div>
-      </div>
+<!-- ═══ HEADER ═══════════════════════════════════════════════════════════════ -->
+<header class="max-w-7xl mx-auto mb-4 bg-[#131722] border border-[#232936] rounded-xl p-4 shadow-2xl">
+  <div class="flex flex-col lg:flex-row items-center justify-between gap-4">
 
-      <!-- Action & Access Controls -->
-      <div class="flex flex-wrap items-center gap-2 bg-[#0a0d14] p-1.5 rounded-xl border border-[#232936]">
-        
-        <!-- View Mode Switcher -->
-        <button id="view-mode-multi" onclick="setViewMode('multi')" class="px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition bg-red-600 text-white shadow">
-          📱 3 Devices Side-by-Side
-        </button>
-        <button id="view-mode-single" onclick="setViewMode('single')" class="px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition bg-[#161c26] text-gray-300 hover:text-white">
-          🔍 Single Device
-        </button>
-
-        <div class="h-4 w-px bg-gray-700 mx-1"></div>
-
-        <!-- Audio Armed / Muted Toggle -->
-        <button id="btn-sound-toggle" onclick="toggleAudio()" class="px-3 py-1.5 bg-[#161c26] hover:bg-[#202838] border border-gray-700 text-gray-300 rounded-lg text-xs font-mono flex items-center gap-1.5 transition">
-          <span id="sound-icon">🔇</span> <span id="sound-label">Audio Muted (Silent)</span>
-        </button>
-
-        <!-- Live GPS Tracking Toggle -->
-        <button id="btn-live-gps" onclick="toggleLiveGps()" class="px-3 py-1.5 bg-[#161c26] hover:bg-[#202838] border border-blue-500/40 text-blue-300 rounded-lg text-xs font-mono flex items-center gap-1.5 transition">
-          <span id="gps-status-dot" class="w-2 h-2 rounded-full bg-blue-500"></span>
-          <span id="gps-btn-label">Start Live GPS Tracking</span>
-        </button>
-
-        <!-- Shareable LAN & Offline Modal -->
-        <button onclick="openShareModal()" class="px-3 py-1.5 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 rounded-lg text-xs font-mono flex items-center gap-1.5 transition font-bold">
-          <span>📲</span> <span>Share / Open on Phone</span>
-        </button>
-
-        <!-- Install as Native App Button -->
-        <button id="btn-pwa-install" onclick="triggerPwaInstall()" class="px-3.5 py-1.5 bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white rounded-lg text-xs font-mono flex items-center gap-1.5 transition font-black shadow-lg">
-          <span>📥</span> <span>INSTALL APP ON DEVICE</span>
-        </button>
-
-      </div>
-
-    </div>
-
-    <!-- MESH NETWORK TOPOLOGY & GATEWAY STATUS BAR -->
-    <div class="mt-4 pt-3 border-t border-[#232936] flex flex-col md:flex-row items-center justify-between gap-3 text-xs font-mono">
-      <div class="flex flex-wrap items-center gap-2 text-gray-400">
-        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span class="font-bold text-gray-300">Topology:</span>
-        <span class="text-red-400 font-bold bg-[#0a0d14] px-2 py-0.5 rounded border border-red-900/60">[Node A: Live Victim]</span>
-        <span class="text-gray-500">⇄ (BLE Radio) ⇄</span>
-        <span class="text-amber-400 font-bold bg-[#0a0d14] px-2 py-0.5 rounded border border-amber-900/60">[Node B: Relay Ridge]</span>
-        <span class="text-gray-500">⇄ (Wi-Fi Direct) ⇄</span>
-        <span class="text-emerald-400 font-bold bg-[#0a0d14] px-2 py-0.5 rounded border border-emerald-900/60">[Node C: Rescue Base]</span>
-      </div>
-
-      <div class="flex items-center gap-3">
-        <label class="flex items-center gap-2 cursor-pointer bg-[#0a0d14] px-3 py-1 rounded-lg border border-gray-800">
-          <input type="checkbox" id="chk-node-c-internet" checked onchange="toggleNodeCInternet()" class="accent-emerald-500 rounded">
-          <span class="text-gray-300 font-bold">Node C Internet Uplink</span>
-          <span id="gateway-status-pill" class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">ONLINE</span>
-        </label>
-      </div>
-    </div>
-  </header>
-
-  <!-- MULTI-DEVICE VIEW CONTAINER (ALL 3 PHONES SIDE-BY-SIDE) -->
-  <div id="multi-device-container" class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-    
-    <!-- DEVICE A: VICTIM (LIVE LOCATION) -->
-    <div class="flex flex-col items-center">
-      <div class="w-full flex items-center justify-between px-3 py-1.5 bg-red-950/40 border border-red-500/40 rounded-t-xl text-xs font-mono mb-1">
-        <div class="flex items-center gap-2 font-bold text-red-400">
-          <span>📱</span> <span>DEVICE A (VICTIM / LIVE GPS)</span>
-        </div>
-        <span id="nodeA-haptic-badge" class="text-[10px] text-gray-400">Pure Off-Grid</span>
-      </div>
-      <div id="phone-frame-A" class="w-full max-w-[380px] h-[750px] bg-[#0e1117] border-4 border-[#232a38] rounded-[36px] shadow-2xl flex flex-col overflow-hidden relative">
-        <!-- Rendered by JS -->
-      </div>
-    </div>
-
-    <!-- DEVICE B: RELAY NODE (MOUNTAIN RIDGE) -->
-    <div class="flex flex-col items-center">
-      <div class="w-full flex items-center justify-between px-3 py-1.5 bg-amber-950/40 border border-amber-500/40 rounded-t-xl text-xs font-mono mb-1">
-        <div class="flex items-center gap-2 font-bold text-amber-400">
-          <span>📱</span> <span>DEVICE B (RELAY ROUTER)</span>
-        </div>
-        <span id="nodeB-haptic-badge" class="text-[10px] text-gray-400">Multi-Hop Bridge</span>
-      </div>
-      <div id="phone-frame-B" class="w-full max-w-[380px] h-[750px] bg-[#0e1117] border-4 border-[#232a38] rounded-[36px] shadow-2xl flex flex-col overflow-hidden relative">
-        <!-- Rendered by JS -->
-      </div>
-    </div>
-
-    <!-- DEVICE C: RESCUE BASE / GATEWAY -->
-    <div class="flex flex-col items-center">
-      <div class="w-full flex items-center justify-between px-3 py-1.5 bg-emerald-950/40 border border-emerald-500/40 rounded-t-xl text-xs font-mono mb-1">
-        <div class="flex items-center gap-2 font-bold text-emerald-400">
-          <span>📱</span> <span>DEVICE C (RESCUE GATEWAY)</span>
-        </div>
-        <span id="nodeC-haptic-badge" class="text-[10px] text-emerald-400 font-bold">Cloud Uplink</span>
-      </div>
-      <div id="phone-frame-C" class="w-full max-w-[380px] h-[750px] bg-[#0e1117] border-4 border-[#232a38] rounded-[36px] shadow-2xl flex flex-col overflow-hidden relative">
-        <!-- Rendered by JS -->
-      </div>
-    </div>
-
-  </div>
-
-  <!-- SINGLE FOCUSED DEVICE VIEW CONTAINER -->
-  <div id="single-device-container" class="max-w-5xl mx-auto hidden mb-8">
-    <div class="flex flex-col items-center">
-      <div class="flex gap-2 mb-3">
-        <button onclick="setFocusedNode('nodeA')" id="btn-focus-A" class="px-4 py-2 bg-red-600 text-white rounded-lg font-mono text-xs font-bold shadow">
-          📱 Device A (Victim)
-        </button>
-        <button onclick="setFocusedNode('nodeB')" id="btn-focus-B" class="px-4 py-2 bg-[#161c26] text-gray-300 rounded-lg font-mono text-xs font-bold">
-          📱 Device B (Relay)
-        </button>
-        <button onclick="setFocusedNode('nodeC')" id="btn-focus-C" class="px-4 py-2 bg-[#161c26] text-gray-300 rounded-lg font-mono text-xs font-bold">
-          📱 Device C (Gateway)
-        </button>
-      </div>
-
-      <div id="phone-frame-focused" class="w-full max-w-[420px] h-[780px] bg-[#0e1117] border-4 border-[#232a38] rounded-[40px] shadow-2xl flex flex-col overflow-hidden relative">
-        <!-- Rendered by JS -->
-      </div>
-    </div>
-  </div>
-
-  <!-- MULTI-NODE LIVE TRACKING MAP SECTION -->
-  <section class="max-w-7xl mx-auto mb-8 bg-[#131722] border border-[#232936] rounded-xl p-5 shadow-2xl">
-    <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-4">
+    <div class="flex items-center gap-3">
+      <div class="w-12 h-12 rounded-xl bg-red-600/20 border border-red-500/50 flex items-center justify-center text-red-500 font-black text-2xl shadow-lg">⚡</div>
       <div>
         <div class="flex items-center gap-2">
-          <span class="text-2xl">🗺️</span>
-          <div>
-            <h2 class="font-bold text-white text-base md:text-lg">ALL 3 NODES LIVE TRACKING & MULTI-HOP TOPOLOGY MAP</h2>
-            <p class="text-xs text-gray-400 font-mono mt-0.5">Real-time GPS tracking of Node A, Node B, and Node C with active radio transmission links.</p>
-          </div>
+          <h1 class="font-black tracking-wider text-white text-lg md:text-xl">OFF-GRID SOS MESH</h1>
+          <span class="bg-red-500/20 text-red-400 border border-red-500/30 text-[10px] font-mono px-2 py-0.5 rounded-full font-bold">MULTI-NODE COMMAND CENTER</span>
         </div>
-      </div>
-
-      <!-- Google Maps External Direct Links -->
-      <div class="flex flex-wrap items-center gap-2">
-        <button onclick="openAllNodesInGoogleMapsRoute()" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white font-mono text-xs font-bold rounded-lg flex items-center gap-2 shadow-lg transition">
-          <span>🚀</span> Open Full 3-Node Multi-Hop Route in Google Maps
-        </button>
-        <button onclick="openInOfficialGoogleMaps(nodes.nodeA.lat, nodes.nodeA.lon)" class="px-3 py-2 bg-red-600/80 hover:bg-red-600 text-white font-mono text-xs font-bold rounded-lg flex items-center gap-1.5 transition">
-          Node A Pin ↗
-        </button>
-        <button onclick="openInOfficialGoogleMaps(nodes.nodeB.lat, nodes.nodeB.lon)" class="px-3 py-2 bg-amber-600/80 hover:bg-amber-600 text-white font-mono text-xs font-bold rounded-lg flex items-center gap-1.5 transition">
-          Node B Pin ↗
-        </button>
-        <button onclick="openInOfficialGoogleMaps(nodes.nodeC.lat, nodes.nodeC.lon)" class="px-3 py-2 bg-emerald-600/80 hover:bg-emerald-600 text-white font-mono text-xs font-bold rounded-lg flex items-center gap-1.5 transition">
-          Node C Pin ↗
-        </button>
+        <p class="text-xs text-gray-400 font-mono">P2P Cluster · Offline GPS · Haptics · Sirens · Google Maps Live Tracking</p>
       </div>
     </div>
 
-    <!-- INTERACTIVE MULTI-NODE VECTOR MAP CANVAS -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-      
-      <!-- Interactive Topology Map Display -->
-      <div class="lg:col-span-8 rounded-xl overflow-hidden border border-[#232936] bg-[#0c0f16] relative h-[420px] flex items-center justify-center">
-        
-        <!-- SVG Canvas for All 3 Nodes and Radio Links -->
-        <svg id="mesh-map-svg" class="w-full h-full" viewBox="0 0 800 420">
-          <defs>
-            <!-- Grid pattern -->
-            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#181f2c" stroke-width="1"/>
-            </pattern>
-            <!-- Pulse Glow Filters -->
-            <filter id="glow-red" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="6" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over" />
-            </filter>
-            <filter id="glow-green" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="6" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over" />
-            </filter>
-          </defs>
-
-          <!-- Grid Background -->
-          <rect width="100%" height="100%" fill="url(#grid)" />
-
-          <!-- Multi-Hop Radio Wave Connection Lines -->
-          <line id="link-AB" x1="180" y1="210" x2="400" y2="150" stroke="#FF9100" stroke-width="3" stroke-linecap="round" class="mesh-link-active" />
-          <line id="link-BC" x1="400" y1="150" x2="620" y2="230" stroke="#00E676" stroke-width="3" stroke-linecap="round" class="mesh-link-active" />
-
-          <!-- HOP 1 & 2 Labels -->
-          <rect x="260" y="165" width="80" height="20" rx="4" fill="#141822" stroke="#FF9100" stroke-width="1" />
-          <text x="300" y="179" fill="#FF9100" font-size="10" font-family="monospace" font-weight="bold" text-anchor="middle">HOP 1 (BLE)</text>
-
-          <rect x="475" y="175" width="95" height="20" rx="4" fill="#141822" stroke="#00E676" stroke-width="1" />
-          <text x="522" y="189" fill="#00E676" font-size="10" font-family="monospace" font-weight="bold" text-anchor="middle">HOP 2 (Wi-Fi)</text>
-
-          <!-- NODE A (VICTIM) -->
-          <g id="svg-node-A" class="cursor-pointer" onclick="selectMapNode('nodeA')">
-            <circle cx="180" cy="210" r="45" fill="none" stroke="#FF1744" stroke-width="1.5" class="pulse-outer" opacity="0.6" />
-            <circle cx="180" cy="210" r="28" fill="#FF1744" opacity="0.2" />
-            <circle cx="180" cy="210" r="16" fill="#D50000" stroke="#FFFFFF" stroke-width="2" filter="url(#glow-red)" />
-            <text x="180" y="214" fill="#FFFFFF" font-size="11" font-weight="bold" text-anchor="middle">A</text>
-            
-            <rect x="120" y="235" width="120" height="34" rx="6" fill="#141822" stroke="#FF1744" stroke-width="1" />
-            <text x="180" y="249" fill="#FF5252" font-size="11" font-weight="bold" text-anchor="middle">NODE A (VICTIM)</text>
-            <text id="svg-coord-A" x="180" y="262" fill="#FFFFFF" font-size="9" font-family="monospace" text-anchor="middle">37.7749, -122.4194</text>
-          </g>
-
-          <!-- NODE B (RELAY ROUTER) -->
-          <g id="svg-node-B" class="cursor-pointer" onclick="selectMapNode('nodeB')">
-            <circle cx="400" cy="150" r="24" fill="#FF9100" opacity="0.2" />
-            <circle cx="400" cy="150" r="15" fill="#FF6D00" stroke="#FFFFFF" stroke-width="2" />
-            <text x="400" y="154" fill="#FFFFFF" font-size="11" font-weight="bold" text-anchor="middle">B</text>
-
-            <rect x="340" y="95" width="120" height="34" rx="6" fill="#141822" stroke="#FF9100" stroke-width="1" />
-            <text x="400" y="109" fill="#FFB74D" font-size="11" font-weight="bold" text-anchor="middle">NODE B (RELAY)</text>
-            <text id="svg-coord-B" x="400" y="122" fill="#FFFFFF" font-size="9" font-family="monospace" text-anchor="middle">37.7791, -122.4140</text>
-          </g>
-
-          <!-- NODE C (RESCUE GATEWAY) -->
-          <g id="svg-node-C" class="cursor-pointer" onclick="selectMapNode('nodeC')">
-            <circle cx="620" cy="230" r="28" fill="#00E676" opacity="0.2" />
-            <circle cx="620" cy="230" r="16" fill="#00C853" stroke="#FFFFFF" stroke-width="2" filter="url(#glow-green)" />
-            <text x="620" y="234" fill="#FFFFFF" font-size="11" font-weight="bold" text-anchor="middle">C</text>
-
-            <rect x="560" y="255" width="120" height="34" rx="6" fill="#141822" stroke="#00E676" stroke-width="1" />
-            <text x="620" y="269" fill="#69F0AE" font-size="11" font-weight="bold" text-anchor="middle">NODE C (GATEWAY)</text>
-            <text id="svg-coord-C" x="620" y="282" fill="#FFFFFF" font-size="9" font-family="monospace" text-anchor="middle">37.7850, -122.4080</text>
-          </g>
-        </svg>
-
-        <!-- Live Status Pill Overlay -->
-        <div class="absolute top-3 left-3 bg-[#131722]/90 border border-gray-700 rounded-lg px-3 py-1.5 text-[11px] font-mono flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span id="map-live-status">LIVE SATELLITE TRACKING ACTIVE</span>
-        </div>
-      </div>
-
-      <!-- Google Maps Satellite View Frame -->
-      <div class="lg:col-span-4 rounded-xl overflow-hidden border border-[#232936] bg-[#0c0e14] flex flex-col h-[420px]">
-        <div class="bg-[#181d2a] px-3 py-2 border-b border-[#232936] flex items-center justify-between text-xs font-mono">
-          <span class="text-blue-400 font-bold">GOOGLE MAPS SATELLITE</span>
-          <span id="gmap-target-name" class="text-gray-300 text-[10px]">Node A Beacon</span>
-        </div>
-        <div class="flex-1 relative">
-          <iframe 
-            id="google-maps-iframe"
-            width="100%" 
-            height="100%" 
-            style="border:0;" 
-            loading="lazy" 
-            allowfullscreen 
-            referrerpolicy="no-referrer-when-downgrade"
-            src="https://maps.google.com/maps?q=37.774929,-122.419416&z=15&output=embed">
-          </iframe>
-        </div>
-        <div class="p-2.5 bg-[#141822] border-t border-[#232936] flex items-center justify-between text-xs font-mono">
-          <span id="gmap-coords-readout" class="text-gray-300 text-[10px]">37.774929°, -122.419416°</span>
-          <button onclick="openCurrentTargetInGoogleMaps()" class="text-blue-400 hover:text-blue-300 font-bold underline text-[11px]">
-            Open in Google Maps ↗
-          </button>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- REAL-TIME RADIO PACKET INSPECTOR & DIAGNOSTICS -->
-  <section class="max-w-7xl mx-auto bg-[#131722] border border-[#232936] rounded-xl p-5 shadow-2xl">
-    <div class="flex items-center justify-between mb-3">
-      <div class="flex items-center gap-2 font-bold text-white text-sm">
-        <span>📡</span> <span>REAL-TIME MULTI-HOP PACKET TRACER & DIAGNOSTICS</span>
-      </div>
-      <button onclick="clearTracerLog()" class="px-2.5 py-1 bg-[#1a202c] hover:bg-[#252e3e] text-gray-400 hover:text-white rounded text-xs font-mono">
-        Clear Tracer
+    <div class="flex flex-wrap items-center gap-2 bg-[#0a0d14] p-1.5 rounded-xl border border-[#232936]">
+      <button id="view-mode-multi" onclick="setViewMode('multi')" class="px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition bg-red-600 text-white shadow">📱 3 Devices</button>
+      <button id="view-mode-single" onclick="setViewMode('single')" class="px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition bg-[#161c26] text-gray-300 hover:text-white">🔍 Single</button>
+      <div class="h-4 w-px bg-gray-700 mx-1"></div>
+      <button id="btn-sound-toggle" onclick="toggleAudio()" class="px-3 py-1.5 bg-[#161c26] hover:bg-[#202838] border border-gray-700 text-gray-300 rounded-lg text-xs font-mono flex items-center gap-1.5 transition">
+        <span id="sound-icon">🔇</span><span id="sound-label">Audio Muted (Silent)</span>
+      </button>
+      <button id="btn-live-gps" onclick="toggleLiveGps()" class="px-3 py-1.5 bg-[#161c26] hover:bg-[#202838] border border-blue-500/40 text-blue-300 rounded-lg text-xs font-mono flex items-center gap-1.5 transition">
+        <span id="gps-status-dot" class="w-2 h-2 rounded-full bg-blue-500"></span>
+        <span id="gps-btn-label">Start Live GPS</span>
+      </button>
+      <button onclick="openShareModal()" class="px-3 py-1.5 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 rounded-lg text-xs font-mono flex items-center gap-1.5 transition font-bold">
+        📲 Share / QR
+      </button>
+      <button id="btn-pwa-install" onclick="triggerPwaInstall()" class="px-3.5 py-1.5 bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white rounded-lg text-xs font-mono flex items-center gap-1.5 transition font-black shadow-lg">
+        📥 INSTALL APP
       </button>
     </div>
+  </div>
 
-    <div id="tracer-log" class="h-44 overflow-y-auto bg-[#0a0c10] border border-gray-800 rounded-lg p-3 font-mono text-[11px] space-y-1.5 text-gray-300">
-      <div class="text-gray-500">[00:00:00] Mesh simulation initialized. Three nodes online: NODE-A7F2, NODE-88D1, NODE-C304.</div>
-      <div class="text-gray-500">[00:00:01] Google Play Services Nearby Connections: P2P_CLUSTER advertising & discovery running.</div>
-      <div class="text-gray-500">[00:00:02] Direct BLE link established between Node A and Node B.</div>
-      <div class="text-gray-500">[00:00:03] Direct Wi-Fi Direct link established between Node B and Node C.</div>
+  <div class="mt-4 pt-3 border-t border-[#232936] flex flex-col md:flex-row items-center justify-between gap-3 text-xs font-mono">
+    <div class="flex flex-wrap items-center gap-2 text-gray-400">
+      <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+      <span class="font-bold text-gray-300">Topology:</span>
+      <span class="text-red-400 font-bold bg-[#0a0d14] px-2 py-0.5 rounded border border-red-900/60">[Node A: Live Victim]</span>
+      <span class="text-gray-500">⇄ BLE ⇄</span>
+      <span class="text-amber-400 font-bold bg-[#0a0d14] px-2 py-0.5 rounded border border-amber-900/60">[Node B: Relay Ridge]</span>
+      <span class="text-gray-500">⇄ Wi-Fi Direct ⇄</span>
+      <span class="text-emerald-400 font-bold bg-[#0a0d14] px-2 py-0.5 rounded border border-emerald-900/60">[Node C: Rescue Base]</span>
     </div>
-  </section>
+    <label class="flex items-center gap-2 cursor-pointer bg-[#0a0d14] px-3 py-1 rounded-lg border border-gray-800">
+      <input type="checkbox" id="chk-node-c-internet" checked onchange="toggleNodeCInternet()" class="accent-emerald-500 rounded">
+      <span class="text-gray-300 font-bold">Node C Internet Uplink</span>
+      <span id="gateway-status-pill" class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">ONLINE</span>
+    </label>
+  </div>
+</header>
 
-  <!-- SHAREABLE LAN & OFFLINE MODAL -->
-  <div id="share-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
-    <div class="bg-[#141822] border border-[#2d3748] rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
-      <div class="flex items-center justify-between">
-        <h3 class="font-bold text-white text-base flex items-center gap-2">
-          <span>📲</span> <span>OPEN & RUN ON OTHER DEVICES</span>
-        </h3>
-        <button onclick="closeShareModal()" class="text-gray-400 hover:text-white text-lg">✕</button>
+<!-- ═══ 3-DEVICE VIEW ═══════════════════════════════════════════════════════ -->
+<div id="multi-device-container" class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+
+  <div class="flex flex-col items-center">
+    <div class="w-full flex items-center justify-between px-3 py-1.5 bg-red-950/40 border border-red-500/40 rounded-t-xl text-xs font-mono mb-1">
+      <div class="flex items-center gap-2 font-bold text-red-400">📱 DEVICE A — VICTIM / LIVE GPS</div>
+      <span id="nodeA-haptic-badge" class="text-[10px] text-gray-400">Pure Off-Grid</span>
+    </div>
+    <div id="phone-frame-A" class="w-full max-w-[380px] h-[750px] bg-[#0e1117] border-4 border-[#232a38] rounded-[36px] shadow-2xl flex flex-col overflow-hidden relative"></div>
+  </div>
+
+  <div class="flex flex-col items-center">
+    <div class="w-full flex items-center justify-between px-3 py-1.5 bg-amber-950/40 border border-amber-500/40 rounded-t-xl text-xs font-mono mb-1">
+      <div class="flex items-center gap-2 font-bold text-amber-400">📱 DEVICE B — RELAY ROUTER</div>
+      <span id="nodeB-haptic-badge" class="text-[10px] text-gray-400">Multi-Hop Bridge</span>
+    </div>
+    <div id="phone-frame-B" class="w-full max-w-[380px] h-[750px] bg-[#0e1117] border-4 border-[#232a38] rounded-[36px] shadow-2xl flex flex-col overflow-hidden relative"></div>
+  </div>
+
+  <div class="flex flex-col items-center">
+    <div class="w-full flex items-center justify-between px-3 py-1.5 bg-emerald-950/40 border border-emerald-500/40 rounded-t-xl text-xs font-mono mb-1">
+      <div class="flex items-center gap-2 font-bold text-emerald-400">📱 DEVICE C — RESCUE GATEWAY</div>
+      <span id="nodeC-haptic-badge" class="text-[10px] text-emerald-400 font-bold">Cloud Uplink</span>
+    </div>
+    <div id="phone-frame-C" class="w-full max-w-[380px] h-[750px] bg-[#0e1117] border-4 border-[#232a38] rounded-[36px] shadow-2xl flex flex-col overflow-hidden relative"></div>
+  </div>
+</div>
+
+<!-- ═══ SINGLE DEVICE VIEW ══════════════════════════════════════════════════ -->
+<div id="single-device-container" class="max-w-5xl mx-auto hidden mb-8">
+  <div class="flex flex-col items-center">
+    <div class="flex gap-2 mb-3">
+      <button onclick="setFocusedNode('nodeA')" id="btn-focus-A" class="px-4 py-2 bg-red-600 text-white rounded-lg font-mono text-xs font-bold shadow">📱 Device A</button>
+      <button onclick="setFocusedNode('nodeB')" id="btn-focus-B" class="px-4 py-2 bg-[#161c26] text-gray-300 rounded-lg font-mono text-xs font-bold">📱 Device B</button>
+      <button onclick="setFocusedNode('nodeC')" id="btn-focus-C" class="px-4 py-2 bg-[#161c26] text-gray-300 rounded-lg font-mono text-xs font-bold">📱 Device C</button>
+    </div>
+    <div id="phone-frame-focused" class="w-full max-w-[420px] h-[780px] bg-[#0e1117] border-4 border-[#232a38] rounded-[40px] shadow-2xl flex flex-col overflow-hidden relative"></div>
+  </div>
+</div>
+
+<!-- ═══ LIVE TRACKING MAP ════════════════════════════════════════════════════ -->
+<section class="max-w-7xl mx-auto mb-8 bg-[#131722] border border-[#232936] rounded-xl p-5 shadow-2xl">
+  <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-4">
+    <div class="flex items-center gap-2">
+      <span class="text-2xl">🗺️</span>
+      <div>
+        <h2 class="font-bold text-white text-base md:text-lg">ALL 3 NODES — LIVE TRACKING MAP</h2>
+        <p class="text-xs text-gray-400 font-mono mt-0.5">Real-time GPS · Click node on map to focus Google Maps</p>
       </div>
+    </div>
+    <div class="flex flex-wrap items-center gap-2">
+      <button onclick="openAllNodesInGoogleMapsRoute()" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white font-mono text-xs font-bold rounded-lg flex items-center gap-2 shadow-lg transition">🚀 3-Node Route in Google Maps</button>
+      <button onclick="openInOfficialGoogleMaps(nodes.nodeA.lat, nodes.nodeA.lon)" class="px-3 py-2 bg-red-600/80 hover:bg-red-600 text-white font-mono text-xs font-bold rounded-lg transition">Node A ↗</button>
+      <button onclick="openInOfficialGoogleMaps(nodes.nodeB.lat, nodes.nodeB.lon)" class="px-3 py-2 bg-amber-600/80 hover:bg-amber-600 text-white font-mono text-xs font-bold rounded-lg transition">Node B ↗</button>
+      <button onclick="openInOfficialGoogleMaps(nodes.nodeC.lat, nodes.nodeC.lon)" class="px-3 py-2 bg-emerald-600/80 hover:bg-emerald-600 text-white font-mono text-xs font-bold rounded-lg transition">Node C ↗</button>
+    </div>
+  </div>
 
-      <p class="text-xs text-gray-300 leading-relaxed">
-        Connect your phone, tablet, or another computer to the <strong>same Wi-Fi network</strong> as this laptop and open the URL below:
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+    <div class="lg:col-span-8 rounded-xl overflow-hidden border border-[#232936] bg-[#0c0f16] relative h-[420px]">
+      <svg id="mesh-map-svg" class="w-full h-full" viewBox="0 0 800 420">
+        <defs>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#181f2c" stroke-width="1"/>
+          </pattern>
+          <filter id="glow-red" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="6" result="blur"/>
+            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+          </filter>
+          <filter id="glow-green" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="6" result="blur"/>
+            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+          </filter>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grid)"/>
+        <line id="link-AB" x1="180" y1="210" x2="400" y2="150" stroke="#FF9100" stroke-width="3" stroke-linecap="round" class="mesh-link-active"/>
+        <line id="link-BC" x1="400" y1="150" x2="620" y2="230" stroke="#00E676" stroke-width="3" stroke-linecap="round" class="mesh-link-active"/>
+        <rect x="260" y="165" width="80" height="20" rx="4" fill="#141822" stroke="#FF9100" stroke-width="1"/>
+        <text x="300" y="179" fill="#FF9100" font-size="10" font-family="monospace" font-weight="bold" text-anchor="middle">HOP 1 (BLE)</text>
+        <rect x="475" y="175" width="95" height="20" rx="4" fill="#141822" stroke="#00E676" stroke-width="1"/>
+        <text x="522" y="189" fill="#00E676" font-size="10" font-family="monospace" font-weight="bold" text-anchor="middle">HOP 2 (Wi-Fi)</text>
+        <g id="svg-node-A" class="cursor-pointer" onclick="selectMapNode('nodeA')">
+          <circle cx="180" cy="210" r="45" fill="none" stroke="#FF1744" stroke-width="1.5" class="pulse-outer" opacity="0.6"/>
+          <circle cx="180" cy="210" r="28" fill="#FF1744" opacity="0.2"/>
+          <circle cx="180" cy="210" r="16" fill="#D50000" stroke="#FFFFFF" stroke-width="2" filter="url(#glow-red)"/>
+          <text x="180" y="214" fill="#FFFFFF" font-size="11" font-weight="bold" text-anchor="middle">A</text>
+          <rect x="120" y="235" width="120" height="34" rx="6" fill="#141822" stroke="#FF1744" stroke-width="1"/>
+          <text x="180" y="249" fill="#FF5252" font-size="11" font-weight="bold" text-anchor="middle">NODE A (VICTIM)</text>
+          <text id="svg-coord-A" x="180" y="262" fill="#FFFFFF" font-size="9" font-family="monospace" text-anchor="middle">37.7749, -122.4194</text>
+        </g>
+        <g id="svg-node-B" class="cursor-pointer" onclick="selectMapNode('nodeB')">
+          <circle cx="400" cy="150" r="24" fill="#FF9100" opacity="0.2"/>
+          <circle cx="400" cy="150" r="15" fill="#FF6D00" stroke="#FFFFFF" stroke-width="2"/>
+          <text x="400" y="154" fill="#FFFFFF" font-size="11" font-weight="bold" text-anchor="middle">B</text>
+          <rect x="340" y="95" width="120" height="34" rx="6" fill="#141822" stroke="#FF9100" stroke-width="1"/>
+          <text x="400" y="109" fill="#FFB74D" font-size="11" font-weight="bold" text-anchor="middle">NODE B (RELAY)</text>
+          <text id="svg-coord-B" x="400" y="122" fill="#FFFFFF" font-size="9" font-family="monospace" text-anchor="middle">37.7791, -122.4140</text>
+        </g>
+        <g id="svg-node-C" class="cursor-pointer" onclick="selectMapNode('nodeC')">
+          <circle cx="620" cy="230" r="28" fill="#00E676" opacity="0.2"/>
+          <circle cx="620" cy="230" r="16" fill="#00C853" stroke="#FFFFFF" stroke-width="2" filter="url(#glow-green)"/>
+          <text x="620" y="234" fill="#FFFFFF" font-size="11" font-weight="bold" text-anchor="middle">C</text>
+          <rect x="560" y="255" width="120" height="34" rx="6" fill="#141822" stroke="#00E676" stroke-width="1"/>
+          <text x="620" y="269" fill="#69F0AE" font-size="11" font-weight="bold" text-anchor="middle">NODE C (GATEWAY)</text>
+          <text id="svg-coord-C" x="620" y="282" fill="#FFFFFF" font-size="9" font-family="monospace" text-anchor="middle">37.7850, -122.4080</text>
+        </g>
+      </svg>
+      <div class="absolute top-3 left-3 bg-[#131722]/90 border border-gray-700 rounded-lg px-3 py-1.5 text-[11px] font-mono flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span id="map-live-status">LIVE SATELLITE TRACKING ACTIVE</span>
+      </div>
+    </div>
+
+    <div class="lg:col-span-4 rounded-xl overflow-hidden border border-[#232936] bg-[#0c0e14] flex flex-col h-[420px]">
+      <div class="bg-[#181d2a] px-3 py-2 border-b border-[#232936] flex items-center justify-between text-xs font-mono">
+        <span class="text-blue-400 font-bold">GOOGLE MAPS — SATELLITE</span>
+        <span id="gmap-target-name" class="text-gray-300 text-[10px]">Node A Beacon</span>
+      </div>
+      <div class="flex-1 relative">
+        <iframe id="google-maps-iframe" width="100%" height="100%" style="border:0" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"
+          src="https://maps.google.com/maps?q=37.774929,-122.419416&z=15&output=embed">
+        </iframe>
+      </div>
+      <div class="p-2.5 bg-[#141822] border-t border-[#232936] flex items-center justify-between text-xs font-mono">
+        <span id="gmap-coords-readout" class="text-gray-300 text-[10px]">37.774929°, -122.419416°</span>
+        <button onclick="openCurrentTargetInGoogleMaps()" class="text-blue-400 hover:text-blue-300 font-bold underline text-[11px]">Open in Google Maps ↗</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PACKET TRACER ════════════════════════════════════════════════════════ -->
+<section class="max-w-7xl mx-auto bg-[#131722] border border-[#232936] rounded-xl p-5 shadow-2xl">
+  <div class="flex items-center justify-between mb-3">
+    <div class="flex items-center gap-2 font-bold text-white text-sm">📡 REAL-TIME MULTI-HOP PACKET TRACER</div>
+    <button onclick="clearTracerLog()" class="px-2.5 py-1 bg-[#1a202c] hover:bg-[#252e3e] text-gray-400 hover:text-white rounded text-xs font-mono">Clear</button>
+  </div>
+  <div id="tracer-log" class="h-44 overflow-y-auto bg-[#0a0c10] border border-gray-800 rounded-lg p-3 font-mono text-[11px] space-y-1.5 text-gray-300">
+    <div class="text-gray-500">[00:00:00] Mesh simulation initialized. Three nodes online: NODE-A7F2, NODE-88D1, NODE-C304.</div>
+    <div class="text-gray-500">[00:00:01] Nearby Connections API: P2P_CLUSTER advertising &amp; discovery started.</div>
+    <div class="text-gray-500">[00:00:02] BLE link established: Node A ↔ Node B.</div>
+    <div class="text-gray-500">[00:00:03] Wi-Fi Direct link established: Node B ↔ Node C.</div>
+    <div class="text-gray-500">[00:00:04] Audio system: MUTED until armed by user. Vibration: Device physical API ready.</div>
+  </div>
+</section>
+
+<!-- ═══ SHARE / QR MODAL ════════════════════════════════════════════════════ -->
+<div id="share-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
+  <div class="bg-[#141822] border border-[#2d3748] rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+    <div class="flex items-center justify-between">
+      <h3 class="font-bold text-white text-base flex items-center gap-2">📲 OPEN ON OTHER DEVICES</h3>
+      <button onclick="closeShareModal()" class="text-gray-400 hover:text-white text-lg">✕</button>
+    </div>
+    <p class="text-xs text-gray-300 leading-relaxed">
+      Connect any phone/tablet/PC to the <strong>same Wi-Fi</strong> as this laptop, then scan the QR code below or type the URL:
+    </p>
+    <div class="p-3 bg-[#0a0c10] border border-gray-700 rounded-xl flex items-center justify-between text-xs font-mono">
+      <span id="share-url-text" class="text-emerald-400 font-bold select-all">http://192.168.1.69:8080/</span>
+      <button onclick="copyShareUrl()" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded font-bold text-xs">Copy</button>
+    </div>
+    <!-- REAL ISO 18004 QR CODE canvas rendered by qrcode engine below -->
+    <div class="flex flex-col items-center justify-center p-4 bg-white rounded-xl">
+      <canvas id="qr-canvas" style="image-rendering:pixelated"></canvas>
+      <p class="text-[11px] text-gray-700 font-bold mt-2 font-mono">SCAN WITH PHONE CAMERA — WORKS ON ANY DEVICE</p>
+    </div>
+    <div class="p-3 bg-[#0d1017] border border-gray-800 rounded-xl text-xs space-y-1">
+      <div class="font-bold text-amber-400 flex items-center gap-1">⚡ 100% OFFLINE FILE ACCESS:</div>
+      <p class="text-gray-400 text-[11px]">
+        Copy <code class="text-white bg-[#1a202c] px-1 rounded">prototype/index.html</code> to any USB drive or phone storage and open it in any browser — works with <strong>zero internet</strong> connection.
       </p>
+      <p class="text-gray-400 text-[11px] mt-1">
+        📁 File path: <code class="text-emerald-400">C:\Users\dhanu\OneDrive\OffGridMeshSOS\prototype\index.html</code>
+      </p>
+    </div>
+  </div>
+</div>
 
-      <div class="p-3 bg-[#0a0c10] border border-gray-700 rounded-xl flex items-center justify-between text-xs font-mono">
-        <span id="share-url-text" class="text-emerald-400 font-bold select-all">http://192.168.1.69:8080/</span>
-        <button onclick="copyShareUrl()" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded font-bold text-xs">
-          Copy Link
+<!-- ═══ TOAST ════════════════════════════════════════════════════════════════ -->
+<div id="toast" class="fixed bottom-6 right-6 bg-red-600 text-white px-4 py-2.5 rounded-xl font-mono text-xs shadow-2xl border border-red-400 transition-opacity duration-300 opacity-0 pointer-events-none z-50 max-w-xs">Notification</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     REAL ISO 18004 QR CODE ENGINE (Fully self-contained, no CDN needed)
+     Based on Kazuhiko Arase QRCode-Generator spec.
+══════════════════════════════════════════════════════════════════════════════ -->
+<script>
+// ---- QR Code Engine (ISO/IEC 18004 compliant) ----------------------------
+const QRMode={MODE_NUMBER:1<<0,MODE_ALPHA_NUM:1<<1,MODE_8BIT_BYTE:1<<2,MODE_KANJI:1<<3};
+const QRErrorCorrectLevel={L:1,M:0,Q:3,H:2};
+const QRMaskPattern={PATTERN000:0,PATTERN001:1,PATTERN010:2,PATTERN011:3,PATTERN100:4,PATTERN101:5,PATTERN110:6,PATTERN111:7};
+
+function QRBitBuffer(){this.buffer=[];this.length=0;}
+QRBitBuffer.prototype={get:function(i){return((this.buffer[Math.floor(i/8)]>>>(7-i%8))&1)===1;},put:function(n,l){for(let i=0;i<l;i++)this.putBit(((n>>>(l-i-1))&1)===1);},getLengthInBits:function(){return this.length;},putBit:function(b){const idx=Math.floor(this.length/8);if(this.buffer.length<=idx)this.buffer.push(0);if(b)this.buffer[idx]|=(0x80>>>(this.length%8));this.length++;}};
+
+function QRPolynomial(n,s){let o=0;while(o<n.length&&n[o]===0)o++;this.num=new Array(n.length-o+s);for(let i=0;i<n.length-o;i++)this.num[i]=n[i+o];}
+QRPolynomial.prototype={get:function(i){return this.num[i];},getLength:function(){return this.num.length;},multiply:function(e){const n=new Array(this.getLength()+e.getLength()-1);for(let i=0;i<this.getLength();i++)for(let j=0;j<e.getLength();j++)n[i+j]^=QRMath.gexp(QRMath.glog(this.get(i))+QRMath.glog(e.get(j)));return new QRPolynomial(n,0);},mod:function(e){if(this.getLength()-e.getLength()<0)return this;const r=QRMath.glog(this.get(0))-QRMath.glog(e.get(0));const n=new Array(this.getLength());for(let i=0;i<this.getLength();i++)n[i]=this.get(i);for(let i=0;i<e.getLength();i++)n[i]^=QRMath.gexp(QRMath.glog(e.get(i))+r);return new QRPolynomial(n,0).mod(e);}};
+
+const QRMath={EXP_TABLE:new Array(256),LOG_TABLE:new Array(256),glog:function(n){if(n<1)throw new Error("glog("+n+")");return QRMath.LOG_TABLE[n];},gexp:function(n){while(n<0)n+=255;while(n>=256)n-=255;return QRMath.EXP_TABLE[n];}};
+(function(){for(let i=0;i<8;i++)QRMath.EXP_TABLE[i]=1<<i;for(let i=8;i<256;i++)QRMath.EXP_TABLE[i]=QRMath.EXP_TABLE[i-4]^QRMath.EXP_TABLE[i-5]^QRMath.EXP_TABLE[i-6]^QRMath.EXP_TABLE[i-8];for(let i=0;i<255;i++)QRMath.LOG_TABLE[QRMath.EXP_TABLE[i]]=i;})();
+
+function QRRSBlock(t,d){this.totalCount=t;this.dataCount=d;}
+QRRSBlock.RS_BLOCK_TABLE=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16]];
+QRRSBlock.getRSBlocks=function(t,e){const tb=QRRSBlock.getRsBlockTable(t,e);if(!tb)throw new Error("bad rs block @ typeNumber:"+t+"/ecLevel:"+e);const len=tb.length/3;const list=[];for(let i=0;i<len;i++){const c=tb[i*3],tc=tb[i*3+1],dc=tb[i*3+2];for(let j=0;j<c;j++)list.push(new QRRSBlock(tc,dc));}return list;};
+QRRSBlock.getRsBlockTable=function(t,e){switch(e){case QRErrorCorrectLevel.L:return QRRSBlock.RS_BLOCK_TABLE[(t-1)*4+0];case QRErrorCorrectLevel.M:return QRRSBlock.RS_BLOCK_TABLE[(t-1)*4+1];case QRErrorCorrectLevel.Q:return QRRSBlock.RS_BLOCK_TABLE[(t-1)*4+2];case QRErrorCorrectLevel.H:return QRRSBlock.RS_BLOCK_TABLE[(t-1)*4+3];}};
+
+function QR8bitByte(d){this.mode=QRMode.MODE_8BIT_BYTE;this.data=d;}
+QR8bitByte.prototype={getLength:function(){return this.data.length;},write:function(b){for(let i=0;i<this.data.length;i++)b.put(this.data.charCodeAt(i),8);}};
+
+const QRUtil={PATTERN_POSITION_TABLE:[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],G15:(1<<10)|(1<<8)|(1<<5)|(1<<4)|(1<<2)|(1<<1)|(1<<0),G18:(1<<12)|(1<<11)|(1<<10)|(1<<9)|(1<<8)|(1<<5)|(1<<2)|(1<<0),G15_MASK:(1<<14)|(1<<12)|(1<<10)|(1<<4)|(1<<1),
+getBCHTypeInfo:function(d){let v=d<<10;while(QRUtil.getBCHDigit(v)-QRUtil.getBCHDigit(QRUtil.G15)>=0)v^=(QRUtil.G15<<(QRUtil.getBCHDigit(v)-QRUtil.getBCHDigit(QRUtil.G15)));return((d<<10)|v)^QRUtil.G15_MASK;},
+getBCHTypeNumber:function(d){let v=d<<12;while(QRUtil.getBCHDigit(v)-QRUtil.getBCHDigit(QRUtil.G18)>=0)v^=(QRUtil.G18<<(QRUtil.getBCHDigit(v)-QRUtil.getBCHDigit(QRUtil.G18)));return(d<<12)|v;},
+getBCHDigit:function(d){let n=0;while(d!==0){n++;d>>>=1;}return n;},
+getPatternPosition:function(t){return QRUtil.PATTERN_POSITION_TABLE[t-1];},
+getMask:function(p,i,j){switch(p){case 0:return(i+j)%2===0;case 1:return i%2===0;case 2:return j%3===0;case 3:return(i+j)%3===0;case 4:return(Math.floor(i/2)+Math.floor(j/3))%2===0;case 5:return(i*j)%2+(i*j)%3===0;case 6:return((i*j)%2+(i*j)%3)%2===0;case 7:return((i*j)%3+(i+j)%2)%2===0;}},
+getErrorCorrectPolynomial:function(l){let a=new QRPolynomial([1],0);for(let i=0;i<l;i++)a=a.multiply(new QRPolynomial([1,QRMath.gexp(i)],0));return a;},
+getLengthInBits:function(m,t){if(t<10){if(m===QRMode.MODE_8BIT_BYTE)return 8;}else if(t<27){if(m===QRMode.MODE_8BIT_BYTE)return 16;}else{if(m===QRMode.MODE_8BIT_BYTE)return 16;}return 8;},
+getLostPoint:function(qr){const mc=qr.getModuleCount();let lp=0;for(let r=0;r<mc;r++){for(let c=0;c<mc;c++){let sc=0;const dk=qr.isDark(r,c);for(let dr=-1;dr<=1;dr++){if(r+dr<0||mc<=r+dr)continue;for(let dc=-1;dc<=1;dc++){if(c+dc<0||mc<=c+dc)continue;if(dr===0&&dc===0)continue;if(dk===qr.isDark(r+dr,c+dc))sc++;}}if(sc>5)lp+=(3+sc-5);}}for(let r=0;r<mc-1;r++)for(let c=0;c<mc-1;c++){let n=0;if(qr.isDark(r,c))n++;if(qr.isDark(r+1,c))n++;if(qr.isDark(r,c+1))n++;if(qr.isDark(r+1,c+1))n++;if(n===0||n===4)lp+=3;}return lp;}};
+
+function QRCodeGen(typeNumber,errorCorrectLevel){this.typeNumber=typeNumber;this.errorCorrectLevel=errorCorrectLevel;this.modules=null;this.moduleCount=0;this.dataCache=null;this.dataList=[];}
+QRCodeGen.PAD0=0xEC;QRCodeGen.PAD1=0x11;
+QRCodeGen.prototype={addData:function(d){this.dataList.push(new QR8bitByte(d));this.dataCache=null;},isDark:function(r,c){if(r<0||this.moduleCount<=r||c<0||this.moduleCount<=c)throw new Error(r+","+c);return this.modules[r][c];},getModuleCount:function(){return this.moduleCount;},
+make:function(){if(this.typeNumber<1){let tn=1;for(tn=1;tn<40;tn++){const rsb=QRRSBlock.getRSBlocks(tn,this.errorCorrectLevel);const buf=new QRBitBuffer();let tdc=0;for(let i=0;i<rsb.length;i++)tdc+=rsb[i].dataCount;for(let i=0;i<this.dataList.length;i++){const d=this.dataList[i];buf.put(d.mode,4);buf.put(d.getLength(),QRUtil.getLengthInBits(d.mode,tn));d.write(buf);}if(buf.getLengthInBits()<=tdc*8)break;}this.typeNumber=tn;}this.makeImpl(false,this.getBestMaskPattern());},
+makeImpl:function(test,maskPattern){this.moduleCount=this.typeNumber*4+17;this.modules=Array.from({length:this.moduleCount},()=>new Array(this.moduleCount).fill(null));this.setupPositionProbePattern(0,0);this.setupPositionProbePattern(this.moduleCount-7,0);this.setupPositionProbePattern(0,this.moduleCount-7);this.setupPositionAdjustPattern();this.setupTimingPattern();this.setupTypeInfo(test,maskPattern);if(this.typeNumber>=7)this.setupTypeNumber(test);if(this.dataCache===null)this.dataCache=QRCodeGen.createData(this.typeNumber,this.errorCorrectLevel,this.dataList);this.mapData(this.dataCache,maskPattern);},
+setupPositionProbePattern:function(row,col){for(let r=-1;r<=7;r++){if(row+r<=-1||this.moduleCount<=row+r)continue;for(let c=-1;c<=7;c++){if(col+c<=-1||this.moduleCount<=col+c)continue;this.modules[row+r][col+c]=((0<=r&&r<=6&&(c===0||c===6))||(0<=c&&c<=6&&(r===0||r===6))||(2<=r&&r<=4&&2<=c&&c<=4));}}},
+getBestMaskPattern:function(){let minLP=0,pat=0;for(let i=0;i<8;i++){this.makeImpl(true,i);const lp=QRUtil.getLostPoint(this);if(i===0||minLP>lp){minLP=lp;pat=i;}}return pat;},
+setupTimingPattern:function(){for(let r=8;r<this.moduleCount-8;r++)if(this.modules[r][6]===null)this.modules[r][6]=(r%2===0);for(let c=8;c<this.moduleCount-8;c++)if(this.modules[6][c]===null)this.modules[6][c]=(c%2===0);},
+setupPositionAdjustPattern:function(){const pos=QRUtil.getPatternPosition(this.typeNumber);for(let i=0;i<pos.length;i++)for(let j=0;j<pos.length;j++){const row=pos[i],col=pos[j];if(this.modules[row][col]!==null)continue;for(let r=-2;r<=2;r++)for(let c=-2;c<=2;c++)this.modules[row+r][col+c]=(Math.abs(r)===2||Math.abs(c)===2||(r===0&&c===0));}},
+setupTypeNumber:function(test){const bits=QRUtil.getBCHTypeNumber(this.typeNumber);for(let i=0;i<18;i++){const mod=(!test&&((bits>>i)&1)===1);this.modules[Math.floor(i/3)][i%3+this.moduleCount-8-3]=mod;}for(let i=0;i<18;i++){const mod=(!test&&((bits>>i)&1)===1);this.modules[i%3+this.moduleCount-8-3][Math.floor(i/3)]=mod;}},
+setupTypeInfo:function(test,maskPattern){const data=(this.errorCorrectLevel<<3)|maskPattern;const bits=QRUtil.getBCHTypeInfo(data);for(let i=0;i<15;i++){const mod=(!test&&((bits>>i)&1)===1);if(i<6)this.modules[i][8]=mod;else if(i<8)this.modules[i+1][8]=mod;else this.modules[this.moduleCount-15+i][8]=mod;}for(let i=0;i<15;i++){const mod=(!test&&((bits>>i)&1)===1);if(i<8)this.modules[8][this.moduleCount-i-1]=mod;else if(i<9)this.modules[8][15-i-1+1]=mod;else this.modules[8][15-i-1]=mod;}this.modules[this.moduleCount-8][8]=(!test);},
+mapData:function(data,maskPattern){let inc=-1,row=this.moduleCount-1,bitIndex=7,byteIndex=0;for(let col=this.moduleCount-1;col>0;col-=2){if(col===6)col--;while(true){for(let c=0;c<2;c++){if(this.modules[row][col-c]===null){let dark=byteIndex<data.length?(((data[byteIndex]>>>bitIndex)&1)===1):false;if(QRUtil.getMask(maskPattern,row,col-c))dark=!dark;this.modules[row][col-c]=dark;bitIndex--;if(bitIndex===-1){byteIndex++;bitIndex=7;}}}row+=inc;if(row<0||this.moduleCount<=row){row-=inc;inc=-inc;break;}}}},
+};
+QRCodeGen.createData=function(typeNumber,errorCorrectLevel,dataList){const rsBlocks=QRRSBlock.getRSBlocks(typeNumber,errorCorrectLevel);const buffer=new QRBitBuffer();for(let i=0;i<dataList.length;i++){const d=dataList[i];buffer.put(d.mode,4);buffer.put(d.getLength(),QRUtil.getLengthInBits(d.mode,typeNumber));d.write(buffer);}let totalDataCount=0;for(let i=0;i<rsBlocks.length;i++)totalDataCount+=rsBlocks[i].dataCount;if(buffer.getLengthInBits()>totalDataCount*8)throw new Error("overflow");if(buffer.getLengthInBits()+4<=totalDataCount*8)buffer.put(0,4);while(buffer.getLengthInBits()%8!==0)buffer.putBit(false);while(buffer.getLengthInBits()<totalDataCount*8){buffer.put(QRCodeGen.PAD0,8);if(buffer.getLengthInBits()>=totalDataCount*8)break;buffer.put(QRCodeGen.PAD1,8);}return QRCodeGen.createBytes(buffer,rsBlocks);};
+QRCodeGen.createBytes=function(buffer,rsBlocks){let offset=0,maxDcCount=0,maxEcCount=0;const dcdata=new Array(rsBlocks.length),ecdata=new Array(rsBlocks.length);for(let r=0;r<rsBlocks.length;r++){const dcCount=rsBlocks[r].dataCount,ecCount=rsBlocks[r].totalCount-dcCount;maxDcCount=Math.max(maxDcCount,dcCount);maxEcCount=Math.max(maxEcCount,ecCount);dcdata[r]=new Array(dcCount);for(let i=0;i<dcdata[r].length;i++)dcdata[r][i]=0xff&buffer.buffer[i+offset];offset+=dcCount;const rsPoly=QRUtil.getErrorCorrectPolynomial(ecCount);const rawPoly=new QRPolynomial(dcdata[r],rsPoly.getLength()-1);const modPoly=rawPoly.mod(rsPoly);ecdata[r]=new Array(rsPoly.getLength()-1);for(let i=0;i<ecdata[r].length;i++){const modIndex=i+modPoly.getLength()-ecdata[r].length;ecdata[r][i]=(modIndex>=0)?modPoly.get(modIndex):0;}}let totalCodeCount=0;for(let i=0;i<rsBlocks.length;i++)totalCodeCount+=rsBlocks[i].totalCount;const data=new Array(totalCodeCount);let index=0;for(let i=0;i<maxDcCount;i++)for(let r=0;r<rsBlocks.length;r++){if(i<dcdata[r].length)data[index++]=dcdata[r][i];}for(let i=0;i<maxEcCount;i++)for(let r=0;r<rsBlocks.length;r++){if(i<ecdata[r].length)data[index++]=ecdata[r][i];}return data;};
+
+function generateQrCode(url) {
+  const canvas = document.getElementById('qr-canvas');
+  if (!canvas) return;
+  try {
+    const qr = new QRCodeGen(0, QRErrorCorrectLevel.M);
+    qr.addData(url);
+    qr.make();
+    const mc = qr.getModuleCount();
+    const cellSize = 5;
+    const margin = 10;
+    const size = mc * cellSize + margin * 2;
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, size, size);
+    ctx.fillStyle = '#000000';
+    for (let r = 0; r < mc; r++) {
+      for (let c = 0; c < mc; c++) {
+        if (qr.isDark(r, c)) {
+          ctx.fillRect(margin + c * cellSize, margin + r * cellSize, cellSize, cellSize);
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('QR generation error:', err);
+    const canvas2 = document.getElementById('qr-canvas');
+    const ctx2 = canvas2.getContext('2d');
+    canvas2.width = 160; canvas2.height = 50;
+    ctx2.fillStyle = '#ff4444';
+    ctx2.fillRect(0, 0, 160, 50);
+    ctx2.fillStyle = '#fff';
+    ctx2.font = '11px monospace';
+    ctx2.fillText('QR Error - use URL above', 5, 28);
+  }
+}
+// ---- End QR Engine -------------------------------------------------------
+
+// ═══ MESH STATE ════════════════════════════════════════════════════════════
+const nodes = {
+  nodeA: { key:"nodeA", id:"NODE-A7F2", name:"Node A (Victim)",  role:"Originator / Off-Grid",    lat:17.3850, lon:78.4867, peers:["NODE-88D1"], hasInternet:false, activeTab:0, selectedCategory:"GENERAL DISTRESS", packets:[] },
+  nodeB: { key:"nodeB", id:"NODE-88D1", name:"Node B (Relay)",   role:"Multi-Hop Router",          lat:17.3900, lon:78.4920, peers:["NODE-A7F2","NODE-C304"], hasInternet:false, activeTab:0, selectedCategory:"MEDICAL CRITICAL", packets:[] },
+  nodeC: { key:"nodeC", id:"NODE-C304", name:"Node C (Gateway)", role:"Rescue Base / Cloud Gate",  lat:17.3950, lon:78.4980, peers:["NODE-88D1"], hasInternet:true,  activeTab:0, selectedCategory:"GENERAL DISTRESS", packets:[] }
+};
+
+let viewMode = 'multi';
+let focusedNodeKey = 'nodeA';
+let currentMapTargetKey = 'nodeA';
+
+// ═══ AUDIO SYSTEM (STRICTLY MUTED until user arms it) ═════════════════════
+let isAudioArmed = false;
+let isSirenSounding = false;
+let audioContext = null;
+let sirenOsc1 = null;
+let sirenGain = null;
+let sirenInterval = null;
+
+// ═══ LIVE GPS ═════════════════════════════════════════════════════════════
+let isLiveGpsActive = false;
+let watchGpsId = null;
+
+// ═══ COUNTDOWN TIMERS ═════════════════════════════════════════════════════
+let countdownTimers = {};
+
+// ═══ INIT ══════════════════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  renderAllPhones();
+  updateMapCoordinatesDisplay();
+  generateQrCode('http://192.168.1.69:8080/');
+});
+
+// ─── AUDIO ─────────────────────────────────────────────────────────────────
+function toggleAudio() {
+  isAudioArmed = !isAudioArmed;
+  document.getElementById('sound-icon').innerText  = isAudioArmed ? '🔊' : '🔇';
+  document.getElementById('sound-label').innerText = isAudioArmed ? 'Audio Armed (Ready)' : 'Audio Muted (Silent)';
+  document.getElementById('btn-sound-toggle').className = isAudioArmed
+    ? 'px-3 py-1.5 bg-emerald-600/30 hover:bg-emerald-600/40 border border-emerald-500 text-emerald-300 rounded-lg text-xs font-mono flex items-center gap-1.5 transition font-bold shadow'
+    : 'px-3 py-1.5 bg-[#161c26] hover:bg-[#202838] border border-gray-700 text-gray-300 rounded-lg text-xs font-mono flex items-center gap-1.5 transition';
+  if (!isAudioArmed) stopEmergencySiren();
+  showToast(isAudioArmed ? '🔊 Audio Armed: Siren will sound on SOS.' : '🔇 Audio Muted: Device stays silent.');
+  logTrace('Sound System: ' + (isAudioArmed ? 'ARMED — siren will trigger on SOS.' : 'MUTED — no audio output.'));
+}
+
+function playEmergencySiren() {
+  if (!isAudioArmed) {
+    logTrace('Emergency alert triggered. Audio is MUTED — staying silent.');
+    return;
+  }
+  if (isSirenSounding) return;
+  try {
+    if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioContext.state === 'suspended') audioContext.resume();
+    isSirenSounding = true;
+    sirenGain = audioContext.createGain();
+    sirenGain.gain.setValueAtTime(0.25, audioContext.currentTime);
+    sirenGain.connect(audioContext.destination);
+    sirenOsc1 = audioContext.createOscillator();
+    sirenOsc1.type = 'sawtooth';
+    sirenOsc1.frequency.setValueAtTime(750, audioContext.currentTime);
+    sirenOsc1.connect(sirenGain);
+    sirenOsc1.start();
+    let high = false;
+    sirenInterval = setInterval(() => {
+      if (!sirenOsc1 || !isSirenSounding) return;
+      high = !high;
+      sirenOsc1.frequency.linearRampToValueAtTime(high ? 1350 : 750, audioContext.currentTime + 0.3);
+    }, 350);
+    logTrace('🔊 Emergency acoustic siren sounding!');
+  } catch (err) { console.warn('WebAudio error:', err); }
+}
+
+function stopEmergencySiren() {
+  isSirenSounding = false;
+  if (sirenInterval) { clearInterval(sirenInterval); sirenInterval = null; }
+  if (sirenOsc1) { try { sirenOsc1.stop(); sirenOsc1.disconnect(); } catch(e){} sirenOsc1 = null; }
+  if (sirenGain) { try { sirenGain.disconnect(); } catch(e){} sirenGain = null; }
+  if (viewMode === 'multi') renderAllPhones(); else renderSinglePhone(focusedNodeKey, 'phone-frame-focused');
+}
+
+// ─── VIBRATION (TARGET ONLY — NOT THE ORIGINATOR) ─────────────────────────
+// Called ONLY on the recipient node, never on the SOS originator.
+function triggerDeviceVibration(nodeKey) {
+  // Hardware vibration on physical phone (Morse SOS: ... --- ...)
+  if ('vibrate' in navigator) {
+    try {
+      navigator.vibrate([200,100,200,100,200,300,500,100,500,100,500,300,200,100,200,100,200]);
+      logTrace(`📳 Hardware Morse-SOS vibration triggered on physical device (${nodes[nodeKey].id}).`);
+    } catch(e) { console.warn('Vibrate API:', e); }
+  }
+  // Visual haptic shake on the recipient phone frame
+  const letter = nodeKey.replace('node', '');
+  const frameEl = document.getElementById(`phone-frame-${letter}`) || document.getElementById('phone-frame-focused');
+  const badgeEl = document.getElementById(`${nodeKey}-haptic-badge`);
+  if (frameEl) {
+    frameEl.classList.add('haptic-shake', 'strobe-active');
+    if (badgeEl) badgeEl.innerText = '📳 VIBRATING';
+    setTimeout(() => {
+      frameEl.classList.remove('haptic-shake', 'strobe-active');
+      if (badgeEl) {
+        badgeEl.innerText = nodeKey === 'nodeA' ? 'Pure Off-Grid' : (nodeKey === 'nodeB' ? 'Multi-Hop Bridge' : 'Cloud Uplink');
+      }
+    }, 4000);
+  }
+}
+
+// ─── LIVE GPS TRACKING ─────────────────────────────────────────────────────
+function toggleLiveGps() {
+  if (isLiveGpsActive) {
+    if (watchGpsId !== null) { navigator.geolocation.clearWatch(watchGpsId); watchGpsId = null; }
+    isLiveGpsActive = false;
+    document.getElementById('gps-status-dot').className = 'w-2 h-2 rounded-full bg-blue-500';
+    document.getElementById('gps-btn-label').innerText = 'Start Live GPS';
+    document.getElementById('btn-live-gps').className = 'px-3 py-1.5 bg-[#161c26] hover:bg-[#202838] border border-blue-500/40 text-blue-300 rounded-lg text-xs font-mono flex items-center gap-1.5 transition';
+    showToast('Live GPS Tracking stopped.');
+    logTrace('Live GPS tracking stopped by user.');
+    return;
+  }
+  if (!navigator.geolocation) {
+    showToast('⚠️ Geolocation not supported by this browser.');
+    logTrace('GPS Error: Geolocation API not available on this browser/OS.');
+    return;
+  }
+  // Show "requesting" state
+  document.getElementById('gps-btn-label').innerText = 'Requesting GPS…';
+  showToast('Requesting live GPS access — please allow location permission…');
+  logTrace('Requesting live GPS permission from browser…');
+
+  watchGpsId = navigator.geolocation.watchPosition(
+    (pos) => {
+      isLiveGpsActive = true;
+      document.getElementById('gps-status-dot').className = 'w-2 h-2 rounded-full bg-emerald-400 animate-ping';
+      document.getElementById('gps-btn-label').innerText = '📍 TRACKING LIVE';
+      document.getElementById('btn-live-gps').className = 'px-3 py-1.5 bg-emerald-600/30 border border-emerald-500 text-emerald-300 rounded-lg text-xs font-mono flex items-center gap-1.5 transition font-bold shadow';
+
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+      nodes.nodeA.lat = lat;
+      nodes.nodeA.lon = lon;
+      // Simulate B and C at real-world offsets from A
+      nodes.nodeB.lat = lat + 0.0042;
+      nodes.nodeB.lon = lon + 0.0054;
+      nodes.nodeC.lat = lat + 0.0098;
+      nodes.nodeC.lon = lon + 0.0112;
+
+      updateMapCoordinatesDisplay();
+      changeMapTargetCoords(lat, lon, 'Your Real Location (Node A)');
+      if (viewMode === 'multi') renderAllPhones(); else renderSinglePhone(focusedNodeKey, 'phone-frame-focused');
+      logTrace(`📍 GPS Lock: Lat ${lat.toFixed(6)}, Lon ${lon.toFixed(6)} · Accuracy ±${pos.coords.accuracy.toFixed(1)}m`);
+    },
+    (err) => {
+      isLiveGpsActive = false;
+      watchGpsId = null;
+      document.getElementById('gps-status-dot').className = 'w-2 h-2 rounded-full bg-red-500';
+      document.getElementById('gps-btn-label').innerText = 'Start Live GPS';
+      document.getElementById('btn-live-gps').className = 'px-3 py-1.5 bg-[#161c26] hover:bg-[#202838] border border-blue-500/40 text-blue-300 rounded-lg text-xs font-mono flex items-center gap-1.5 transition';
+      let reason = 'Unknown GPS error.';
+      if (err.code === 1) reason = 'Location permission DENIED. Please allow in browser settings.';
+      else if (err.code === 2) reason = 'GPS position unavailable — try outside or near a window.';
+      else if (err.code === 3) reason = 'GPS request timed out. Try again.';
+      showToast('⚠️ GPS Error: ' + reason);
+      logTrace('GPS Error [code ' + err.code + ']: ' + reason + ' — Using default disaster coords.');
+    },
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+  );
+}
+
+// ─── GOOGLE MAPS INTEGRATION ───────────────────────────────────────────────
+function openInOfficialGoogleMaps(lat, lon) {
+  window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lon}`, '_blank');
+  showToast('Opening coordinates in Google Maps…');
+  logTrace(`Opened Google Maps at ${lat.toFixed(5)}, ${lon.toFixed(5)}`);
+}
+
+function openAllNodesInGoogleMapsRoute() {
+  const a = nodes.nodeA, b = nodes.nodeB, c = nodes.nodeC;
+  window.open(`https://www.google.com/maps/dir/${a.lat},${a.lon}/${b.lat},${b.lon}/${c.lat},${c.lon}`, '_blank');
+  showToast('Opening 3-Node Multi-Hop Route in Google Maps…');
+  logTrace('Opened Google Maps direction route: Node A → Node B → Node C.');
+}
+
+function openCurrentTargetInGoogleMaps() {
+  const n = nodes[currentMapTargetKey];
+  openInOfficialGoogleMaps(n.lat, n.lon);
+}
+
+function selectMapNode(nodeKey) {
+  currentMapTargetKey = nodeKey;
+  const n = nodes[nodeKey];
+  changeMapTargetCoords(n.lat, n.lon, `${n.name} Beacon`);
+}
+
+function changeMapTargetCoords(lat, lon, label) {
+  document.getElementById('google-maps-iframe').src = `https://maps.google.com/maps?q=${lat},${lon}&z=15&output=embed`;
+  document.getElementById('gmap-target-name').innerText = label;
+  document.getElementById('gmap-coords-readout').innerText = `${lat.toFixed(6)}°, ${lon.toFixed(6)}°`;
+}
+
+function updateMapCoordinatesDisplay() {
+  document.getElementById('svg-coord-A').textContent = `${nodes.nodeA.lat.toFixed(4)}, ${nodes.nodeA.lon.toFixed(4)}`;
+  document.getElementById('svg-coord-B').textContent = `${nodes.nodeB.lat.toFixed(4)}, ${nodes.nodeB.lon.toFixed(4)}`;
+  document.getElementById('svg-coord-C').textContent = `${nodes.nodeC.lat.toFixed(4)}, ${nodes.nodeC.lon.toFixed(4)}`;
+}
+
+// ─── SOS BROADCAST (FIXED: Originator does NOT vibrate) ───────────────────
+function handleSosButtonClick(nodeKey) {
+  if (countdownTimers[nodeKey]) {
+    clearInterval(countdownTimers[nodeKey]);
+    delete countdownTimers[nodeKey];
+    showToast('SOS Broadcast Cancelled.');
+    if (viewMode === 'multi') renderAllPhones(); else renderSinglePhone(nodeKey, 'phone-frame-focused');
+    return;
+  }
+  const node = nodes[nodeKey];
+  let count = 3;
+  showToast(`⚠️ SOS from ${node.id} in ${count}s… Tap again to cancel.`);
+  countdownTimers[nodeKey] = setInterval(() => {
+    count--;
+    if (count > 0) {
+      showToast(`⚠️ SOS broadcasting in ${count}s…`);
+    } else {
+      clearInterval(countdownTimers[nodeKey]);
+      delete countdownTimers[nodeKey];
+      executeSosBroadcast(nodeKey);
+    }
+  }, 1000);
+}
+
+function executeSosBroadcast(nodeKey) {
+  const node = nodes[nodeKey];
+  const packet = {
+    packetId: 'pkt-' + Math.random().toString(36).substring(2, 9),
+    senderId: node.id,
+    packetType: 'SOS_ALERT',
+    payload: `DISTRESS BEACON: ${node.selectedCategory}`,
+    latitude: node.lat,
+    longitude: node.lon,
+    timestamp: Date.now(),
+    ttl: 5,
+    hopPath: node.id,
+    isSyncedToCloud: false
+  };
+
+  logTrace(`🚨 [${node.id}] SOS BROADCAST: "${packet.payload}" at (${packet.latitude.toFixed(5)}, ${packet.longitude.toFixed(5)})`);
+  showToast(`🚨 SOS Broadcasted across Mesh from ${node.id}!`);
+
+  // ✅ Originator node plays its own siren (if audio armed) but does NOT vibrate itself
+  playEmergencySiren();
+
+  // Focus map on SOS origin
+  selectMapNode(nodeKey);
+
+  // Propagate to peers — recipient nodes will vibrate
+  routePacket(packet, nodeKey, null);
+}
+
+// ─── PACKET ROUTING (Vibration on RECIPIENTS only) ────────────────────────
+function routePacket(packet, sourceNodeKey, incomingEndpoint) {
+  const sourceNode = nodes[sourceNodeKey];
+
+  if (!sourceNode.packets.some(p => p.packetId === packet.packetId)) {
+    sourceNode.packets.unshift(packet);
+  }
+
+  if (sourceNode.hasInternet && !packet.isSyncedToCloud) {
+    packet.isSyncedToCloud = true;
+    logTrace(`☁️ [${sourceNode.id}] INTERNET UPLINK: Packet ${packet.packetId} uploaded to cloud!`);
+  }
+
+  if (viewMode === 'multi') renderAllPhones(); else renderSinglePhone(focusedNodeKey, 'phone-frame-focused');
+
+  // Find valid neighbor nodes to forward to
+  const neighbors = Object.keys(nodes).filter(k => k !== sourceNodeKey);
+
+  neighbors.forEach(targetKey => {
+    const targetNode = nodes[targetKey];
+    if (!sourceNode.peers.includes(targetNode.id)) return;
+    if (targetNode.packets.some(p => p.packetId === packet.packetId)) {
+      logTrace(`⚠️ [${targetNode.id}] Dropped duplicate packet ${packet.packetId}`);
+      return;
+    }
+    const hops = packet.hopPath.split(',');
+    if (hops.includes(targetNode.id) || packet.senderId === targetNode.id) {
+      logTrace(`🛑 [${targetNode.id}] Dropped — routing loop prevented (path: ${packet.hopPath})`);
+      return;
+    }
+    if (packet.ttl <= 1) {
+      logTrace(`⛔ [${targetNode.id}] TTL expired — packet not forwarded.`);
+      return;
+    }
+
+    setTimeout(() => {
+      const relayedPacket = { ...packet, ttl: packet.ttl - 1, hopPath: `${packet.hopPath},${targetNode.id}` };
+      logTrace(`📡 [${sourceNode.id} ➔ ${targetNode.id}] RELAY HOP: ${relayedPacket.packetId} (TTL=${relayedPacket.ttl}, Hops=${relayedPacket.hopPath.split(',').length})`);
+
+      // ✅ ONLY recipient nodes vibrate — NOT the originator
+      if (packet.packetType === 'SOS_ALERT') {
+        // targetKey is recipient — always vibrate recipients
+        triggerDeviceVibration(targetKey);
+        // Also send browser notification if supported
+        if ('Notification' in window && Notification.permission === 'granted') {
+          new Notification(`⚠️ SOS Alert — ${targetNode.name}`, {
+            body: `Distress signal received from ${packet.senderId}: ${packet.payload}`,
+            icon: './icon-192.svg'
+          });
+        }
+      }
+
+      routePacket(relayedPacket, targetKey, sourceNode.id);
+    }, 600);
+  });
+}
+
+// ─── SHARE MODAL ──────────────────────────────────────────────────────────
+function openShareModal() {
+  document.getElementById('share-modal').classList.remove('hidden');
+  generateQrCode('http://192.168.1.69:8080/');
+}
+function closeShareModal() { document.getElementById('share-modal').classList.add('hidden'); }
+function copyShareUrl() {
+  const url = document.getElementById('share-url-text').innerText;
+  navigator.clipboard.writeText(url).then(() => showToast('Link copied to clipboard!')).catch(() => { showToast('Copy failed — select & copy manually.'); });
+}
+
+// ─── VIEWPORT / VIEW ENGINE ───────────────────────────────────────────────
+function setViewMode(mode) {
+  viewMode = mode;
+  const multi = document.getElementById('multi-device-container');
+  const single = document.getElementById('single-device-container');
+  const bM = document.getElementById('view-mode-multi');
+  const bS = document.getElementById('view-mode-single');
+  if (mode === 'multi') {
+    multi.classList.remove('hidden'); single.classList.add('hidden');
+    bM.className = 'px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition bg-red-600 text-white shadow';
+    bS.className = 'px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition bg-[#161c26] text-gray-300 hover:text-white';
+    renderAllPhones();
+  } else {
+    multi.classList.add('hidden'); single.classList.remove('hidden');
+    bM.className = 'px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition bg-[#161c26] text-gray-300 hover:text-white';
+    bS.className = 'px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition bg-red-600 text-white shadow';
+    setFocusedNode(focusedNodeKey);
+  }
+}
+
+function setFocusedNode(key) {
+  focusedNodeKey = key;
+  ['A','B','C'].forEach(l => {
+    const btn = document.getElementById(`btn-focus-${l}`);
+    btn.className = (key === `node${l}`)
+      ? 'px-4 py-2 bg-red-600 text-white rounded-lg font-mono text-xs font-bold shadow'
+      : 'px-4 py-2 bg-[#161c26] text-gray-300 rounded-lg font-mono text-xs font-bold';
+  });
+  renderSinglePhone(key, 'phone-frame-focused');
+}
+
+function renderAllPhones() {
+  renderSinglePhone('nodeA','phone-frame-A');
+  renderSinglePhone('nodeB','phone-frame-B');
+  renderSinglePhone('nodeC','phone-frame-C');
+}
+
+function renderSinglePhone(nodeKey, containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  const node = nodes[nodeKey];
+  container.innerHTML = `
+    <div class="bg-[#141822] px-5 pt-2 pb-1.5 flex items-center justify-between text-[11px] font-mono text-gray-400 border-b border-[#212735] z-20">
+      <span>${new Date().toTimeString().substring(0,5)}</span>
+      <div class="w-16 h-3 bg-black rounded-full mx-auto"></div>
+      <div class="flex items-center gap-1.5"><span class="text-emerald-400 font-bold">P2P 📶</span><span>🔋96%</span></div>
+    </div>
+    <div class="bg-[#141822] px-4 py-2 border-b border-[#212735] flex items-center justify-between z-10">
+      <div class="flex items-center gap-2">
+        <span class="text-red-500 font-black text-sm">⚡</span>
+        <div>
+          <div class="font-black text-[11px] tracking-wider text-white">OFF-GRID SOS MESH</div>
+          <div class="text-[8px] font-mono text-amber-400 font-bold">P2P MULTI-HOP PROTOCOL</div>
+        </div>
+      </div>
+      <div class="px-2 py-0.5 rounded bg-red-600/30 text-red-400 border border-red-500/40 text-[10px] font-mono font-bold">${node.id}</div>
+    </div>
+    <div class="flex-1 overflow-y-auto p-3 space-y-3 bg-[#0e1117]">
+      ${node.activeTab === 0 ? renderSosTab(node) : ''}
+      ${node.activeTab === 1 ? renderChatTab(node) : ''}
+      ${node.activeTab === 2 ? renderPeersTab(node) : ''}
+      ${node.activeTab === 3 ? renderLogTab(node) : ''}
+    </div>
+    <div class="bg-[#141822] border-t border-[#212735] px-2 py-1 flex items-center justify-around z-10 text-center">
+      <button onclick="setNodeTab('${nodeKey}',0)" class="flex-1 py-1 flex flex-col items-center ${node.activeTab===0?'text-red-500 font-bold':'text-gray-400'} text-[9px]"><span class="text-base">🚨</span><span>SOS</span></button>
+      <button onclick="setNodeTab('${nodeKey}',1)" class="flex-1 py-1 flex flex-col items-center ${node.activeTab===1?'text-amber-400 font-bold':'text-gray-400'} text-[9px]"><span class="text-base">💬</span><span>Chat</span></button>
+      <button onclick="setNodeTab('${nodeKey}',2)" class="flex-1 py-1 flex flex-col items-center ${node.activeTab===2?'text-emerald-400 font-bold':'text-gray-400'} text-[9px]"><span class="text-base">📡</span><span>Peers</span></button>
+      <button onclick="setNodeTab('${nodeKey}',3)" class="flex-1 py-1 flex flex-col items-center ${node.activeTab===3?'text-white font-bold':'text-gray-400'} text-[9px]"><span class="text-base">📋</span><span>Log</span></button>
+    </div>
+  `;
+}
+
+function setNodeTab(key, tab) {
+  nodes[key].activeTab = tab;
+  if (viewMode === 'multi') renderAllPhones(); else renderSinglePhone(key, 'phone-frame-focused');
+}
+
+// ─── SOS TAB (with 4 Beacon Categories) ───────────────────────────────────
+function renderSosTab(node) {
+  const sosPackets = node.packets.filter(p => p.packetType === 'SOS_ALERT');
+  const categories = ['GENERAL DISTRESS','MEDICAL CRITICAL','TRAPPED IN RUBBLE','FIRE EVACUATION'];
+  const catEmoji = { 'GENERAL DISTRESS':'🆘', 'MEDICAL CRITICAL':'🏥', 'TRAPPED IN RUBBLE':'🏗️', 'FIRE EVACUATION':'🔥' };
+  return `
+    <div class="bg-[#141822] border border-[#232936] rounded-xl p-2.5 flex items-center justify-between text-[11px] font-mono">
+      <div><div class="text-[8px] text-gray-400">NODE ID</div><div class="font-bold text-white">${node.id}</div></div>
+      <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span><div><div class="text-[8px] text-gray-400">PEERS</div><div class="font-bold text-emerald-400">${node.peers.length} Direct</div></div></div>
+      <div class="text-right"><div class="text-[8px] text-gray-400">UPLINK</div><div class="font-bold ${node.hasInternet?'text-emerald-400':'text-amber-400'}">${node.hasInternet?'ONLINE':'OFF-GRID'}</div></div>
+    </div>
+
+    <div class="bg-[#141822] border border-[#232936] rounded-xl p-3 space-y-2 text-xs font-mono">
+      <div class="flex items-center justify-between text-[11px]">
+        <div class="flex items-center gap-1 text-emerald-400 font-bold">📍 GPS SATELLITE FIX</div>
+        <button onclick="randomizeGps('${node.key}')" class="text-gray-400 hover:text-white text-[10px]">↻ Refresh</button>
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <div><div class="text-[8px] text-gray-400">LATITUDE</div><div class="font-bold text-white text-[12px]">${node.lat.toFixed(6)}°</div></div>
+        <div><div class="text-[8px] text-gray-400">LONGITUDE</div><div class="font-bold text-white text-[12px]">${node.lon.toFixed(6)}°</div></div>
+      </div>
+      <div class="grid grid-cols-2 gap-2 pt-1 border-t border-gray-800">
+        <button onclick="copyCoordinates(${node.lat},${node.lon})" class="py-1 bg-[#1c2230] hover:bg-[#252e42] border border-gray-700 rounded text-[10px] text-white flex items-center justify-center gap-1 font-bold">📋 Copy GPS</button>
+        <button onclick="openInOfficialGoogleMaps(${node.lat},${node.lon})" class="py-1 bg-blue-600 hover:bg-blue-500 rounded text-[10px] text-white flex items-center justify-center gap-1 font-bold shadow">🗺️ Google Maps</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="text-[9px] font-mono font-bold text-gray-400 mb-1.5">SELECT BEACON CATEGORY:</div>
+      <div class="grid grid-cols-2 gap-1">
+        ${categories.map(cat => `
+          <button onclick="selectCategory('${node.key}','${cat}')" class="px-2 py-1.5 rounded-lg text-[9px] font-bold border transition text-left flex items-center gap-1 ${node.selectedCategory===cat?'bg-red-600 border-red-500 text-white shadow-lg':'bg-[#161c26] border-[#2b3548] text-gray-300 hover:border-gray-500'}">
+            <span>${catEmoji[cat]}</span><span>${cat}</span>
+          </button>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="flex justify-center py-2">
+      <div class="relative w-36 h-36 flex items-center justify-center">
+        <div class="absolute w-36 h-36 rounded-full bg-red-600/20 pulse-outer"></div>
+        <div class="absolute w-30 h-30 rounded-full bg-red-800/40 border border-red-500/50"></div>
+        <button onclick="handleSosButtonClick('${node.key}')" class="relative w-24 h-24 rounded-full bg-gradient-to-b from-red-500 via-red-600 to-red-800 border-2 border-white/80 shadow-2xl flex flex-col items-center justify-center text-white active:scale-95 transition cursor-pointer">
+          <span class="text-xl">⚠️</span>
+          <span class="font-black text-lg tracking-wider">SOS</span>
+          <span class="text-[8px] font-bold tracking-widest text-white/90">BROADCAST</span>
         </button>
       </div>
+    </div>
 
-      <!-- QR Code Canvas for Direct Mobile Camera Scan -->
-      <div class="flex flex-col items-center justify-center p-4 bg-white rounded-xl">
-        <canvas id="qr-canvas" class="w-44 h-44"></canvas>
-        <p class="text-[11px] text-gray-700 font-bold mt-2 font-mono">SCAN WITH PHONE CAMERA</p>
+    ${isSirenSounding ? `
+      <button onclick="stopEmergencySiren()" class="w-full py-1.5 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs rounded-lg flex items-center justify-center gap-2 shadow">🔇 SILENCE SIREN</button>
+    ` : ''}
+
+    <div class="space-y-1.5 pt-1">
+      <div class="flex items-center gap-1 text-[11px] font-bold text-white">
+        <span class="text-red-500">⚠️</span>
+        <span>RECEIVED SOS BEACONS (${sosPackets.length})</span>
       </div>
-
-      <!-- Offline File Instructions -->
-      <div class="p-3 bg-[#0d1017] border border-gray-800 rounded-xl text-xs space-y-1">
-        <div class="font-bold text-amber-400 flex items-center gap-1">
-          <span>⚡</span> <span>100% OFFLINE FILE ACCESS:</span>
-        </div>
-        <p class="text-gray-400 text-[11px]">
-          This prototype runs completely offline with zero internet. You can copy <code class="text-white">prototype/index.html</code> directly to a USB drive or phone storage and open it in any browser!
-        </p>
+      <div class="space-y-1.5 text-xs max-h-48 overflow-y-auto">
+        ${sosPackets.length === 0
+          ? `<div class="p-3 bg-[#141822] rounded-lg text-center text-gray-500 text-[11px]">No distress signals received.</div>`
+          : sosPackets.map(p => renderPacketCard(p, node.id)).join('')
+        }
       </div>
     </div>
-  </div>
+  `;
+}
 
-  <!-- TOAST NOTIFICATION POPUP -->
-  <div id="toast" class="fixed bottom-6 right-6 bg-red-600 text-white px-4 py-2.5 rounded-xl font-mono text-xs shadow-2xl border border-red-400 transition-opacity duration-300 opacity-0 pointer-events-none z-50">
-    Notification
-  </div>
-
-  <!-- SCRIPT -->
-  <script>
-    // --- NETWORK STATE ---
-    const nodes = {
-      nodeA: {
-        key: "nodeA",
-        id: "NODE-A7F2",
-        name: "Node A (Victim)",
-        role: "Originator / Off-Grid",
-        lat: 37.774929,
-        lon: -122.419416,
-        peers: ["NODE-88D1"],
-        hasInternet: false,
-        activeTab: 0,
-        selectedCategory: "GENERAL DISTRESS",
-        packets: []
-      },
-      nodeB: {
-        key: "nodeB",
-        id: "NODE-88D1",
-        name: "Node B (Relay)",
-        role: "Multi-Hop Router",
-        lat: 37.779100,
-        lon: -122.414000,
-        peers: ["NODE-A7F2", "NODE-C304"],
-        hasInternet: false,
-        activeTab: 0,
-        selectedCategory: "MEDICAL CRITICAL",
-        packets: []
-      },
-      nodeC: {
-        key: "nodeC",
-        id: "NODE-C304",
-        name: "Node C (Gateway)",
-        role: "Rescue Base / Gateway",
-        lat: 37.785000,
-        lon: -122.408000,
-        peers: ["NODE-88D1"],
-        hasInternet: true,
-        activeTab: 0,
-        selectedCategory: "GENERAL DISTRESS",
-        packets: []
+// ─── CHAT TAB ──────────────────────────────────────────────────────────────
+function renderChatTab(node) {
+  const textPackets = node.packets.filter(p => p.packetType === 'TEXT_MESSAGE');
+  return `
+    <div class="flex items-center justify-between text-[11px] font-mono text-gray-400">
+      <span>OFF-GRID CHAT CHANNEL</span><span class="text-emerald-400 font-bold">TTL = 5 Hops</span>
+    </div>
+    <div class="flex gap-1 overflow-x-auto pb-1 text-[10px]">
+      <button onclick="sendQuickPhrase('${node.key}','I am safe.')" class="whitespace-nowrap px-2 py-0.5 bg-[#141822] border border-gray-700 rounded text-gray-300">I am safe</button>
+      <button onclick="sendQuickPhrase('${node.key}','Need water and food.')" class="whitespace-nowrap px-2 py-0.5 bg-[#141822] border border-gray-700 rounded text-gray-300">Need water</button>
+      <button onclick="sendQuickPhrase('${node.key}','Road blocked ahead.')" class="whitespace-nowrap px-2 py-0.5 bg-[#141822] border border-gray-700 rounded text-gray-300">Road blocked</button>
+      <button onclick="sendQuickPhrase('${node.key}','Sheltered in position.')" class="whitespace-nowrap px-2 py-0.5 bg-[#141822] border border-gray-700 rounded text-gray-300">Sheltered</button>
+      <button onclick="sendQuickPhrase('${node.key}','Send rescue team now.')" class="whitespace-nowrap px-2 py-0.5 bg-[#141822] border border-gray-700 rounded text-gray-300">Need rescue</button>
+    </div>
+    <div class="h-72 overflow-y-auto space-y-1.5 pr-1">
+      ${textPackets.length === 0
+        ? `<div class="p-6 bg-[#141822] rounded-xl text-center text-gray-500 text-xs">No mesh messages yet.<br>Use input below to broadcast.</div>`
+        : textPackets.map(p => renderPacketCard(p, node.id)).join('')
       }
-    };
+    </div>
+    <div class="flex items-center gap-1 pt-1">
+      <input type="text" id="chat-input-${node.key}" placeholder="Type mesh message…" onkeydown="if(event.key==='Enter')sendChatMessage('${node.key}')" class="flex-1 bg-[#141822] border border-[#2b3548] rounded-xl px-2.5 py-1.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-amber-400">
+      <button onclick="sendChatMessage('${node.key}')" class="w-8 h-8 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold flex items-center justify-center transition">➤</button>
+    </div>
+  `;
+}
 
-    let viewMode = 'multi';
-    let focusedNodeKey = 'nodeA';
-    let currentMapTargetKey = 'nodeA';
+// ─── PEERS TAB (Radar Scanner) ─────────────────────────────────────────────
+function renderPeersTab(node) {
+  return `
+    <div class="flex justify-center py-1">
+      <div class="relative w-36 h-36 rounded-full bg-[#131722] border-2 border-emerald-500/40 flex items-center justify-center overflow-hidden">
+        <div class="absolute w-24 h-24 rounded-full border border-emerald-500/30"></div>
+        <div class="absolute w-12 h-12 rounded-full border border-emerald-500/30"></div>
+        <div class="absolute w-full h-px bg-emerald-500/20"></div>
+        <div class="absolute h-full w-px bg-emerald-500/20"></div>
+        <div class="absolute w-36 h-36 radar-beam" style="background:conic-gradient(from 0deg at 50% 50%,rgba(0,230,118,0.4) 0deg,transparent 60deg)"></div>
+        <div class="relative z-10 flex flex-col items-center"><span class="text-emerald-400 text-lg">📡</span><span class="text-[8px] font-mono font-bold text-emerald-400">P2P SCAN</span></div>
+        <div class="absolute top-8 left-9 w-2 h-2 rounded-full bg-emerald-400 animate-ping"></div>
+      </div>
+    </div>
+    <div>
+      <div class="flex items-center justify-between text-[11px] font-mono mb-1.5">
+        <span class="text-gray-400 font-bold">DISCOVERED PEERS</span>
+        <span class="text-emerald-400 font-bold">${node.peers.length} LINKED</span>
+      </div>
+      <div class="space-y-1.5">
+        ${node.peers.map(peerId => {
+          const peerNode = Object.values(nodes).find(n => n.id === peerId);
+          return `
+            <div class="bg-[#141822] border border-[#232936] rounded-xl p-2 flex items-center justify-between text-[11px] font-mono">
+              <div class="flex items-center gap-1.5"><span class="text-emerald-400">📶</span><div><div class="font-bold text-white">${peerNode ? peerNode.name : peerId}</div><div class="text-[9px] text-gray-400">${peerId}</div></div></div>
+              <div class="text-right"><div class="text-emerald-400 font-bold text-[9px]">DIRECT HOP</div><div class="text-gray-500 text-[9px]">-54 dBm · 2.4GHz</div></div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+    <div class="p-3 bg-[#0d1017] border border-gray-800 rounded-xl text-xs text-center">
+      <div class="text-emerald-400 font-bold text-[11px] font-mono">📡 Google Play Services Nearby API</div>
+      <div class="text-gray-500 text-[10px] mt-1">P2P_CLUSTER · BLE + Wi-Fi Direct · Multi-Hop TTL 5</div>
+    </div>
+  `;
+}
 
-    // --- AUDIO SYSTEM (MUTED UNTIL ACTIVATED) ---
-    let isAudioArmed = false; // Strictly MUTED by default
-    let isSirenSounding = false;
-    let audioContext = null;
-    let sirenOsc1 = null;
-    let sirenOsc2 = null;
-    let sirenGain = null;
-    let sirenInterval = null;
+// ─── LOG TAB ──────────────────────────────────────────────────────────────
+function renderLogTab(node) {
+  const syncedCount = node.packets.filter(p => p.isSyncedToCloud).length;
+  return `
+    <div class="flex items-center justify-between text-[11px] font-mono">
+      <span class="font-bold text-white">MULTI-HOP PACKET LOG</span>
+      <span class="text-emerald-400 font-bold">Synced: ${syncedCount}/${node.packets.length}</span>
+    </div>
+    <div class="flex gap-1.5">
+      <button onclick="forceCloudSync('${node.key}')" class="flex-1 py-1 bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-[10px] rounded-lg shadow">☁️ SYNC UPLINK</button>
+      <button onclick="clearPacketLedger('${node.key}')" class="px-2 py-1 bg-red-600/20 text-red-400 border border-red-500/30 text-[10px] rounded-lg font-bold">CLEAR</button>
+    </div>
+    <div class="space-y-1.5 max-h-96 overflow-y-auto">
+      ${node.packets.length === 0
+        ? `<div class="p-6 bg-[#141822] rounded-xl text-center text-gray-500 text-xs">No packets in Room database.</div>`
+        : node.packets.map(p => renderPacketCard(p, node.id, true)).join('')
+      }
+    </div>
+  `;
+}
 
-    // --- VIBRATION & HAPTICS ---
-    let countdownTimers = {};
+// ─── PACKET CARD ──────────────────────────────────────────────────────────
+function renderPacketCard(p, localId) {
+  const isSos = p.packetType === 'SOS_ALERT';
+  const isMine = p.senderId === localId;
+  const hopCount = p.hopPath ? p.hopPath.split(',').length : 1;
+  const hopText = hopCount === 1 ? 'Direct Hop' : `${hopCount} Hops (${p.hopPath.replace(/,/g,' → ')})`;
+  return `
+    <div class="p-2.5 rounded-xl border ${isSos?'bg-red-950/30 border-red-500/60':'bg-[#141822] border-[#232936]'} space-y-1 text-xs">
+      <div class="flex items-center justify-between font-mono text-[9px]">
+        <div class="flex items-center gap-1 font-bold ${isSos?'text-red-400':(isMine?'text-emerald-400':'text-gray-300')}">
+          ${isSos ? '⚠️ EMERGENCY SOS' : (isMine ? 'YOU' : p.senderId)}
+        </div>
+        <div class="flex items-center gap-1 text-gray-400">
+          <span>${new Date(p.timestamp).toLocaleTimeString()}</span>
+          <span>${p.isSyncedToCloud ? '☁️' : '⏳'}</span>
+        </div>
+      </div>
+      <div class="text-white text-[11px] ${isSos?'font-bold':''}">${p.payload}</div>
+      <div class="flex items-center justify-between text-[9px] font-mono text-gray-400 pt-0.5 border-t border-gray-800">
+        <span class="bg-[#1e2533] px-1.5 py-0.5 rounded text-gray-300">${hopText}</span>
+        <span>TTL: ${p.ttl}</span>
+      </div>
+      ${p.latitude ? `
+        <div class="text-[9px] font-mono text-emerald-400 flex items-center justify-between pt-0.5">
+          <span>GPS: ${p.latitude.toFixed(5)}, ${p.longitude.toFixed(5)}</span>
+          <button onclick="openInOfficialGoogleMaps(${p.latitude},${p.longitude})" class="text-blue-400 hover:text-blue-300 font-bold underline">Open in Maps ↗</button>
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
 
-    // --- LIVE LOCATION TRACKING ---
-    let isLiveGpsActive = false;
-    let watchGpsId = null;
+// ─── UTILITY FUNCTIONS ─────────────────────────────────────────────────────
+function selectCategory(nodeKey, category) {
+  nodes[nodeKey].selectedCategory = category;
+  if (viewMode === 'multi') renderAllPhones(); else renderSinglePhone(nodeKey, 'phone-frame-focused');
+}
 
-    // --- INITIALIZATION ---
-    window.addEventListener('DOMContentLoaded', () => {
-      renderAllPhones();
-      updateMapCoordinatesDisplay();
-      generateQrCode('http://192.168.1.69:8080/');
+function sendQuickPhrase(nodeKey, phrase) {
+  const input = document.getElementById(`chat-input-${nodeKey}`);
+  if (input) input.value = phrase;
+  sendChatMessage(nodeKey);
+}
+
+function sendChatMessage(nodeKey) {
+  const input = document.getElementById(`chat-input-${nodeKey}`);
+  const text = input ? input.value.trim() : '';
+  if (!text) return;
+  if (input) input.value = '';
+  const node = nodes[nodeKey];
+  const packet = { packetId:'msg-'+Math.random().toString(36).substring(2,9), senderId:node.id, packetType:'TEXT_MESSAGE', payload:text, latitude:node.lat, longitude:node.lon, timestamp:Date.now(), ttl:5, hopPath:node.id, isSyncedToCloud:false };
+  logTrace(`💬 [${node.id}] CHAT: "${text}"`);
+  routePacket(packet, nodeKey, null);
+}
+
+function randomizeGps(nodeKey) {
+  nodes[nodeKey].lat += (Math.random() - 0.5) * 0.003;
+  nodes[nodeKey].lon += (Math.random() - 0.5) * 0.003;
+  updateMapCoordinatesDisplay();
+  logTrace(`↻ GPS refreshed for ${nodes[nodeKey].id}`);
+  if (viewMode === 'multi') renderAllPhones(); else renderSinglePhone(nodeKey, 'phone-frame-focused');
+}
+
+function copyCoordinates(lat, lon) {
+  navigator.clipboard.writeText(`${lat}, ${lon}`).then(() => {
+    showToast(`Coordinates copied: ${lat.toFixed(6)}, ${lon.toFixed(6)}`);
+  }).catch(() => showToast('Copy failed — select text manually.'));
+}
+
+function toggleNodeCInternet() {
+  const chk = document.getElementById('chk-node-c-internet');
+  nodes.nodeC.hasInternet = chk.checked;
+  const pill = document.getElementById('gateway-status-pill');
+  pill.innerText = chk.checked ? 'ONLINE' : 'OFFLINE';
+  pill.className = `text-[10px] px-1.5 py-0.5 rounded font-bold ${chk.checked?'bg-emerald-500/20 text-emerald-400':'bg-red-500/20 text-red-400'}`;
+  logTrace(`Node C Internet Uplink: ${chk.checked?'ONLINE':'OFFLINE'}`);
+  if (chk.checked) forceCloudSync('nodeC');
+  if (viewMode === 'multi') renderAllPhones(); else renderSinglePhone(focusedNodeKey, 'phone-frame-focused');
+}
+
+function forceCloudSync(nodeKey) {
+  const node = nodes[nodeKey];
+  if (!node.hasInternet) { alert('This node has no internet uplink. Enable Node C Internet Uplink!'); return; }
+  let count = 0;
+  node.packets.forEach(p => { if (!p.isSyncedToCloud) { p.isSyncedToCloud = true; count++; } });
+  showToast(`☁️ Cloud Upload: ${count} packets synced.`);
+  logTrace(`☁️ [${node.id}] Synced ${count} packets to cloud.`);
+  if (viewMode === 'multi') renderAllPhones(); else renderSinglePhone(nodeKey, 'phone-frame-focused');
+}
+
+function clearPacketLedger(nodeKey) {
+  nodes[nodeKey].packets = [];
+  showToast(`Packet log cleared on ${nodes[nodeKey].id}`);
+  if (viewMode === 'multi') renderAllPhones(); else renderSinglePhone(nodeKey, 'phone-frame-focused');
+}
+
+function logTrace(msg) {
+  const now = new Date().toTimeString().split(' ')[0];
+  const tracer = document.getElementById('tracer-log');
+  if (!tracer) return;
+  const row = document.createElement('div');
+  row.className = 'text-gray-300';
+  row.innerHTML = `<span class="text-gray-500">[${now}]</span> ${msg}`;
+  tracer.insertBefore(row, tracer.firstChild);
+}
+
+function clearTracerLog() {
+  const el = document.getElementById('tracer-log');
+  if (el) el.innerHTML = '';
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  if (!toast) return;
+  toast.innerText = msg;
+  toast.classList.remove('opacity-0','pointer-events-none');
+  toast.classList.add('opacity-100');
+  setTimeout(() => {
+    toast.classList.remove('opacity-100');
+    toast.classList.add('opacity-0','pointer-events-none');
+  }, 3500);
+}
+
+// ─── PWA INSTALL ──────────────────────────────────────────────────────────
+let deferredPwaPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPwaPrompt = e;
+  document.getElementById('btn-pwa-install').classList.add('animate-bounce');
+  logTrace('PWA Ready: App can be installed to Home Screen or Desktop!');
+});
+
+function triggerPwaInstall() {
+  if (deferredPwaPrompt) {
+    deferredPwaPrompt.prompt();
+    deferredPwaPrompt.userChoice.then((result) => {
+      if (result.outcome === 'accepted') {
+        showToast('✅ App installed! Check Apps drawer / Desktop.');
+        logTrace('User accepted PWA installation.');
+      }
+      deferredPwaPrompt = null;
     });
-
-    // --- AUDIO SYSTEM IMPROVED IMPLEMENTATION ---
-    function toggleAudio() {
-      isAudioArmed = !isAudioArmed;
-      const icon = document.getElementById('sound-icon');
-      const label = document.getElementById('sound-label');
-      const btn = document.getElementById('btn-sound-toggle');
-
-      if (isAudioArmed) {
-        icon.innerText = "🔊";
-        label.innerText = "Audio Armed (Ready)";
-        btn.className = "px-3 py-1.5 bg-emerald-600/30 hover:bg-emerald-600/40 border border-emerald-500 text-emerald-300 rounded-lg text-xs font-mono flex items-center gap-1.5 transition font-bold shadow";
-        showToast("🔊 Audio Armed: Emergency Siren will sound on warning/SOS alerts.");
-        logTrace("Sound System: ARMED. Emergency siren will play upon SOS triggers.");
-      } else {
-        icon.innerText = "🔇";
-        label.innerText = "Audio Muted (Silent)";
-        btn.className = "px-3 py-1.5 bg-[#161c26] hover:bg-[#202838] border border-gray-700 text-gray-300 rounded-lg text-xs font-mono flex items-center gap-1.5 transition";
-        stopEmergencySiren();
-        showToast("🔇 Audio Muted: Device will remain silent.");
-        logTrace("Sound System: MUTED. All warning audio disabled.");
-      }
-    }
-
-    function playEmergencySiren() {
-      // ONLY play if explicitly armed by the user!
-      if (!isAudioArmed) {
-        logTrace("Emergency alert triggered, but Audio is MUTED. Remaining silent.");
-        return;
-      }
-      if (isSirenSounding) return;
-
-      try {
-        if (!audioContext) {
-          audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (audioContext.state === 'suspended') {
-          audioContext.resume();
-        }
-
-        isSirenSounding = true;
-        sirenGain = audioContext.createGain();
-        sirenGain.gain.setValueAtTime(0.25, audioContext.currentTime);
-        sirenGain.connect(audioContext.destination);
-
-        sirenOsc1 = audioContext.createOscillator();
-        sirenOsc1.type = "sawtooth";
-        sirenOsc1.frequency.setValueAtTime(750, audioContext.currentTime);
-        sirenOsc1.connect(sirenGain);
-        sirenOsc1.start();
-
-        let high = false;
-        sirenInterval = setInterval(() => {
-          if (!sirenOsc1 || !isSirenSounding) return;
-          high = !high;
-          const targetFreq = high ? 1350 : 750;
-          sirenOsc1.frequency.linearRampToValueAtTime(targetFreq, audioContext.currentTime + 0.3);
-        }, 350);
-
-        logTrace("🔊 Real-time Emergency Acoustic Siren sounding!");
-      } catch (err) {
-        console.warn("Web Audio API requires user click initiation:", err);
-      }
-    }
-
-    function stopEmergencySiren() {
-      isSirenSounding = false;
-      if (sirenInterval) {
-        clearInterval(sirenInterval);
-        sirenInterval = null;
-      }
-      if (sirenOsc1) {
-        try { sirenOsc1.stop(); sirenOsc1.disconnect(); } catch (e) {}
-        sirenOsc1 = null;
-      }
-      if (sirenGain) {
-        try { sirenGain.disconnect(); } catch (e) {}
-        sirenGain = null;
-      }
-    }
-
-    // --- VIBRATION & HAPTIC SYSTEM ---
-    function triggerDeviceVibration(nodeKey) {
-      // 1. Hardware vibration API for smartphones & vibrating devices
-      if ('vibrate' in navigator) {
-        try {
-          // Morse code for SOS: ... --- ...
-          navigator.vibrate([200, 100, 200, 100, 200, 300, 500, 100, 500, 100, 500, 300, 200, 100, 200, 100, 200]);
-          logTrace(`📳 Hardware Vibration triggered on physical device (Morse SOS Pattern).`);
-        } catch (e) {
-          console.warn("Vibrate API call error:", e);
-        }
-      }
-
-      // 2. Visual Haptic Screen Shake for laptops/desktops
-      const frameLetter = nodeKey.replace('node', '');
-      const frameEl = document.getElementById(`phone-frame-${frameLetter}`) || document.getElementById('phone-frame-focused');
-      const badgeEl = document.getElementById(`${nodeKey}-haptic-badge`);
-
-      if (frameEl) {
-        frameEl.classList.add('haptic-shake');
-        frameEl.classList.add('strobe-active');
-        if (badgeEl) badgeEl.innerText = "📳 VIBRATING";
-
-        setTimeout(() => {
-          frameEl.classList.remove('haptic-shake');
-          frameEl.classList.remove('strobe-active');
-          if (badgeEl) badgeEl.innerText = nodeKey === 'nodeA' ? 'Pure Off-Grid' : (nodeKey === 'nodeB' ? 'Multi-Hop Bridge' : 'Cloud Uplink');
-        }, 3000);
-      }
-    }
-
-    // --- LIVE LOCATION TRACKING SYSTEM ---
-    function toggleLiveGps() {
-      if (isLiveGpsActive) {
-        // Stop
-        if (watchGpsId !== null) {
-          navigator.geolocation.clearWatch(watchGpsId);
-          watchGpsId = null;
-        }
-        isLiveGpsActive = false;
-        document.getElementById('gps-status-dot').className = "w-2 h-2 rounded-full bg-blue-500";
-        document.getElementById('gps-btn-label').innerText = "Start Live GPS Tracking";
-        document.getElementById('btn-live-gps').className = "px-3 py-1.5 bg-[#161c26] hover:bg-[#202838] border border-blue-500/40 text-blue-300 rounded-lg text-xs font-mono flex items-center gap-1.5 transition";
-        showToast("Live GPS Tracking Stopped.");
-        logTrace("Live GPS tracking stopped.");
-      } else {
-        // Start continuous live tracking
-        if (!navigator.geolocation) {
-          alert("Geolocation is not supported by your browser/device.");
-          return;
-        }
-
-        showToast("Requesting live satellite GPS access...");
-        watchGpsId = navigator.geolocation.watchPosition(
-          (pos) => {
-            isLiveGpsActive = true;
-            document.getElementById('gps-status-dot').className = "w-2 h-2 rounded-full bg-emerald-400 animate-ping";
-            document.getElementById('gps-btn-label').innerText = "Live GPS: TRACKING ACTIVE";
-            document.getElementById('btn-live-gps').className = "px-3 py-1.5 bg-emerald-600/30 border border-emerald-500 text-emerald-300 rounded-lg text-xs font-mono flex items-center gap-1.5 transition font-bold shadow";
-
-            const lat = pos.coords.latitude;
-            const lon = pos.coords.longitude;
-            nodes.nodeA.lat = lat;
-            nodes.nodeA.lon = lon;
-
-            // Update Node B and Node C relative positions so the 3-node cluster moves with you!
-            nodes.nodeB.lat = lat + 0.0042;
-            nodes.nodeB.lon = lon + 0.0054;
-            nodes.nodeC.lat = lat + 0.0098;
-            nodes.nodeC.lon = lon + 0.0112;
-
-            updateMapCoordinatesDisplay();
-            changeMapTargetCoords(lat, lon, "Your Real Location (Node A)");
-
-            if (viewMode === 'multi') renderAllPhones(); else renderSinglePhone(focusedNodeKey, 'phone-frame-focused');
-            logTrace(`📍 Live GPS Locked: Lat ${lat.toFixed(6)}, Lon ${lon.toFixed(6)} (Accuracy ±${pos.coords.accuracy.toFixed(1)}m)`);
-          },
-          (err) => {
-            alert(`GPS Error: ${err.message}. Using high-precision disaster coordinates.`);
-            isLiveGpsActive = false;
-          },
-          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-        );
-      }
-    }
-
-    // --- GOOGLE MAPS DIRECT INTEGRATION ---
-    function openInOfficialGoogleMaps(lat, lon) {
-      const url = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
-      window.open(url, '_blank');
-      showToast("Opening exact coordinates in Google Maps...");
-      logTrace(`Opened Google Maps at coordinates: ${lat}, ${lon}`);
-    }
-
-    function openAllNodesInGoogleMapsRoute() {
-      const a = nodes.nodeA;
-      const b = nodes.nodeB;
-      const c = nodes.nodeC;
-      // Google Maps direction route connecting all 3 nodes!
-      const url = `https://www.google.com/maps/dir/${a.lat},${a.lon}/${b.lat},${b.lon}/${c.lat},${c.lon}`;
-      window.open(url, '_blank');
-      showToast("Opening complete 3-Node Multi-Hop Route in Google Maps...");
-      logTrace("Opened Google Maps Direction Route showing Node A → Node B → Node C multi-hop path!");
-    }
-
-    function openCurrentTargetInGoogleMaps() {
-      const node = nodes[currentMapTargetKey];
-      openInOfficialGoogleMaps(node.lat, node.lon);
-    }
-
-    function selectMapNode(nodeKey) {
-      currentMapTargetKey = nodeKey;
-      const node = nodes[nodeKey];
-      changeMapTargetCoords(node.lat, node.lon, `${node.name} Beacon`);
-    }
-
-    function changeMapTargetCoords(lat, lon, label) {
-      const iframe = document.getElementById('google-maps-iframe');
-      const labelEl = document.getElementById('gmap-target-name');
-      const coordsEl = document.getElementById('gmap-coords-readout');
-      iframe.src = `https://maps.google.com/maps?q=${lat},${lon}&z=15&output=embed`;
-      labelEl.innerText = label;
-      coordsEl.innerText = `${lat.toFixed(6)}°, ${lon.toFixed(6)}°`;
-    }
-
-    function updateMapCoordinatesDisplay() {
-      document.getElementById('svg-coord-A').textContent = `${nodes.nodeA.lat.toFixed(4)}, ${nodes.nodeA.lon.toFixed(4)}`;
-      document.getElementById('svg-coord-B').textContent = `${nodes.nodeB.lat.toFixed(4)}, ${nodes.nodeB.lon.toFixed(4)}`;
-      document.getElementById('svg-coord-C').textContent = `${nodes.nodeC.lat.toFixed(4)}, ${nodes.nodeC.lon.toFixed(4)}`;
-    }
-
-    // --- SOS BROADCAST WITH SOUND & VIBRATION ---
-    function handleSosButtonClick(nodeKey) {
-      if (countdownTimers[nodeKey]) {
-        clearInterval(countdownTimers[nodeKey]);
-        delete countdownTimers[nodeKey];
-        showToast("SOS Broadcast Cancelled.");
-        if (viewMode === 'multi') renderAllPhones(); else renderSinglePhone(nodeKey, 'phone-frame-focused');
-        return;
-      }
-
-      const node = nodes[nodeKey];
-      let count = 3;
-      showToast(`Broadcasting SOS from ${node.id} in ${count}s... (Tap to cancel)`);
-
-      countdownTimers[nodeKey] = setInterval(() => {
-        count--;
-        if (count > 0) {
-          showToast(`Broadcasting SOS in ${count}s...`);
-        } else {
-          clearInterval(countdownTimers[nodeKey]);
-          delete countdownTimers[nodeKey];
-          executeSosBroadcast(nodeKey);
-        }
-      }, 1000);
-    }
-
-    function executeSosBroadcast(nodeKey) {
-      const node = nodes[nodeKey];
-      const packet = {
-        packetId: "pkt-" + Math.random().toString(36).substring(2, 9),
-        senderId: node.id,
-        packetType: "SOS_ALERT",
-        payload: `DISTRESS BEACON: ${node.selectedCategory}`,
-        latitude: node.lat,
-        longitude: node.lon,
-        timestamp: Date.now(),
-        ttl: 5,
-        hopPath: node.id,
-        isSyncedToCloud: false
-      };
-
-      logTrace(`🚨 [${node.id}] SOS BROADCAST STARTED: "${packet.payload}" at (${packet.latitude.toFixed(6)}, ${packet.longitude.toFixed(6)})`);
-      showToast(`🚨 SOS Broadcasted across Mesh from ${node.id}!`);
-
-      // Trigger siren if audio armed
-      playEmergencySiren();
-
-      // Trigger vibration
-      triggerDeviceVibration(nodeKey);
-
-      // Focus map to beacon
-      selectMapNode(nodeKey);
-
-      // Propagate packet across mesh
-      routePacket(packet, nodeKey, null);
-    }
-
-    function routePacket(packet, sourceNodeKey, incomingEndpoint) {
-      const sourceNode = nodes[sourceNodeKey];
-
-      if (!sourceNode.packets.some(p => p.packetId === packet.packetId)) {
-        sourceNode.packets.unshift(packet);
-      }
-
-      if (sourceNode.hasInternet && !packet.isSyncedToCloud) {
-        packet.isSyncedToCloud = true;
-        logTrace(`☁️ [${sourceNode.id}] INTERNET UPLINK ACTIVE: Packet ${packet.packetId} uploaded to Emergency Cloud Server!`);
-      }
-
-      if (viewMode === 'multi') renderAllPhones(); else renderSinglePhone(focusedNodeKey, 'phone-frame-focused');
-
-      // Forward to neighbors
-      const neighbors = Object.keys(nodes).filter(k => k !== sourceNodeKey);
-
-      neighbors.forEach(targetKey => {
-        const targetNode = nodes[targetKey];
-        if (!sourceNode.peers.includes(targetNode.id)) return;
-
-        // Dedup check
-        if (targetNode.packets.some(p => p.packetId === packet.packetId)) {
-          logTrace(`⚠️ [${targetNode.id}] Dropped duplicate packet ${packet.packetId}`);
-          return;
-        }
-
-        // Loop check
-        const hops = packet.hopPath.split(',');
-        if (hops.includes(targetNode.id) || packet.senderId === targetNode.id) {
-          logTrace(`🛑 [${targetNode.id}] Dropped packet to prevent routing loop (Already visited: ${packet.hopPath})`);
-          return;
-        }
-
-        // TTL check
-        if (packet.ttl <= 1) {
-          logTrace(`⛔ [${targetNode.id}] Packet TTL expired (TTL reached 1). Not forwarding.`);
-          return;
-        }
-
-        // Forward hop
-        setTimeout(() => {
-          const relayedPacket = {
-            ...packet,
-            ttl: packet.ttl - 1,
-            hopPath: `${packet.hopPath},${targetNode.id}`
-          };
-          logTrace(`📡 [${sourceNode.id} ➔ ${targetNode.id}] RADIO HOP RELAY: Packet ${relayedPacket.packetId} (TTL=${relayedPacket.ttl}, Hop #${relayedPacket.hopPath.split(',').length})`);
-          
-          // Vibrate target device on receipt
-          triggerDeviceVibration(targetKey);
-
-          routePacket(relayedPacket, targetKey, sourceNode.id);
-        }, 600);
-      });
-    }
-
-    // --- SHARE MODAL & QR CODE ---
-    function openShareModal() {
-      document.getElementById('share-modal').classList.remove('hidden');
-    }
-
-    function closeShareModal() {
-      document.getElementById('share-modal').classList.add('hidden');
-    }
-
-    function copyShareUrl() {
-      const url = document.getElementById('share-url-text').innerText;
-      navigator.clipboard.writeText(url);
-      showToast("Link copied to clipboard!");
-    }
-
-    // Pure Canvas QR Code Generator for http://192.168.1.69:8080/
-    function generateQrCode(url) {
-      const canvas = document.getElementById('qr-canvas');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      const size = 180;
-      canvas.width = size;
-      canvas.height = size;
-
-      // Draw clean styled visual QR code representation
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(0, 0, size, size);
-
-      ctx.fillStyle = "#000000";
-      // Position markers
-      function drawFinder(x, y) {
-        ctx.fillRect(x, y, 42, 42);
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(x + 6, y + 6, 30, 30);
-        ctx.fillStyle = "#000000";
-        ctx.fillRect(x + 12, y + 12, 18, 18);
-      }
-      drawFinder(10, 10);
-      drawFinder(size - 52, 10);
-      drawFinder(10, size - 52);
-
-      // Alignment pattern
-      ctx.fillRect(size - 36, size - 36, 20, 20);
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(size - 32, size - 32, 12, 12);
-      ctx.fillStyle = "#000000";
-      ctx.fillRect(size - 28, size - 28, 4, 4);
-
-      // Data pseudo-random dots seeded by URL
-      let seed = 0;
-      for (let i = 0; i < url.length; i++) seed += url.charCodeAt(i);
-
-      for (let r = 8; r < size - 8; r += 6) {
-        for (let c = 8; c < size - 8; c += 6) {
-          if ((r < 58 && c < 58) || (r < 58 && c > size - 58) || (r > size - 58 && c < 58)) continue;
-          seed = (seed * 9301 + 49297) % 233280;
-          if (seed / 233280 > 0.45) {
-            ctx.fillRect(c, r, 5, 5);
-          }
-        }
-      }
-    }
-
-    // --- VIEWPORT / RENDER ENGINE ---
-    function setViewMode(mode) {
-      viewMode = mode;
-      const multi = document.getElementById('multi-device-container');
-      const single = document.getElementById('single-device-container');
-      const bM = document.getElementById('view-mode-multi');
-      const bS = document.getElementById('view-mode-single');
-
-      if (mode === 'multi') {
-        multi.classList.remove('hidden');
-        single.classList.add('hidden');
-        bM.className = "px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition bg-red-600 text-white shadow";
-        bS.className = "px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition bg-[#161c26] text-gray-300 hover:text-white";
-        renderAllPhones();
-      } else {
-        multi.classList.add('hidden');
-        single.classList.remove('hidden');
-        bM.className = "px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition bg-[#161c26] text-gray-300 hover:text-white";
-        bS.className = "px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition bg-red-600 text-white shadow";
-        setFocusedNode(focusedNodeKey);
-      }
-    }
-
-    function setFocusedNode(key) {
-      focusedNodeKey = key;
-      ['A', 'B', 'C'].forEach(l => {
-        const btn = document.getElementById(`btn-focus-${l}`);
-        btn.className = (key === `node${l}`) ?
-          "px-4 py-2 bg-red-600 text-white rounded-lg font-mono text-xs font-bold shadow" :
-          "px-4 py-2 bg-[#161c26] text-gray-300 rounded-lg font-mono text-xs font-bold";
-      });
-      renderSinglePhone(key, 'phone-frame-focused');
-    }
-
-    function renderAllPhones() {
-      renderSinglePhone('nodeA', 'phone-frame-A');
-      renderSinglePhone('nodeB', 'phone-frame-B');
-      renderSinglePhone('nodeC', 'phone-frame-C');
-    }
-
-    function renderSinglePhone(nodeKey, containerId) {
-      const container = document.getElementById(containerId);
-      if (!container) return;
-      const node = nodes[nodeKey];
-
-      container.innerHTML = `
-        <div class="bg-[#141822] px-5 pt-2 pb-1.5 flex items-center justify-between text-[11px] font-mono text-gray-400 border-b border-[#212735] z-20">
-          <span>${new Date().toTimeString().substring(0, 5)}</span>
-          <div class="w-16 h-3 bg-black rounded-full mx-auto"></div>
-          <div class="flex items-center gap-1.5">
-            <span class="text-emerald-400 font-bold">P2P 📶</span>
-            <span>🔋 96%</span>
-          </div>
-        </div>
-
-        <div class="bg-[#141822] px-4 py-2 border-b border-[#212735] flex items-center justify-between z-10">
-          <div class="flex items-center gap-2">
-            <span class="text-red-500 font-black text-sm">⚡</span>
-            <div>
-              <div class="font-black text-[11px] tracking-wider text-white">OFF-GRID SOS MESH</div>
-              <div class="text-[8px] font-mono text-amber-400 font-bold">P2P MULTI-HOP PROTOCOL</div>
-            </div>
-          </div>
-          <div class="px-2 py-0.5 rounded bg-red-600/30 text-red-400 border border-red-500/40 text-[10px] font-mono font-bold">
-            ${node.id}
-          </div>
-        </div>
-
-        <div class="flex-1 overflow-y-auto p-3 space-y-3 bg-[#0e1117]">
-          ${node.activeTab === 0 ? renderSosTab(node) : ''}
-          ${node.activeTab === 1 ? renderChatTab(node) : ''}
-          ${node.activeTab === 2 ? renderPeersTab(node) : ''}
-          ${node.activeTab === 3 ? renderLogTab(node) : ''}
-        </div>
-
-        <div class="bg-[#141822] border-t border-[#212735] px-2 py-1 flex items-center justify-around z-10 text-center">
-          <button onclick="setNodeTab('${nodeKey}', 0)" class="flex-1 py-1 flex flex-col items-center ${node.activeTab === 0 ? 'text-red-500 font-bold' : 'text-gray-400'} text-[9px]">
-            <span class="text-base">🚨</span> <span>SOS</span>
-          </button>
-          <button onclick="setNodeTab('${nodeKey}', 1)" class="flex-1 py-1 flex flex-col items-center ${node.activeTab === 1 ? 'text-amber-400 font-bold' : 'text-gray-400'} text-[9px]">
-            <span class="text-base">💬</span> <span>Chat</span>
-          </button>
-          <button onclick="setNodeTab('${nodeKey}', 2)" class="flex-1 py-1 flex flex-col items-center ${node.activeTab === 2 ? 'text-emerald-400 font-bold' : 'text-gray-400'} text-[9px]">
-            <span class="text-base">📡</span> <span>Peers</span>
-          </button>
-          <button onclick="setNodeTab('${nodeKey}', 3)" class="flex-1 py-1 flex flex-col items-center ${node.activeTab === 3 ? 'text-white font-bold' : 'text-gray-400'} text-[9px]">
-            <span class="text-base">📋</span> <span>Log</span>
-          </button>
-        </div>
-      `;
-    }
-
-    function setNodeTab(key, tab) {
-      nodes[key].activeTab = tab;
-      if (viewMode === 'multi') renderAllPhones(); else renderSinglePhone(key, 'phone-frame-focused');
-    }
-
-    function renderSosTab(node) {
-      const sosPackets = node.packets.filter(p => p.packetType === "SOS_ALERT");
-      return `
-        <div class="bg-[#141822] border border-[#232936] rounded-xl p-2.5 flex items-center justify-between text-[11px] font-mono">
-          <div>
-            <div class="text-[8px] text-gray-400">NODE ID</div>
-            <div class="font-bold text-white">${node.id}</div>
-          </div>
-          <div class="flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <div>
-              <div class="text-[8px] text-gray-400">PEERS</div>
-              <div class="font-bold text-emerald-400">${node.peers.length} Direct</div>
-            </div>
-          </div>
-          <div class="text-right">
-            <div class="text-[8px] text-gray-400">UPLINK</div>
-            <div class="font-bold ${node.hasInternet ? 'text-emerald-400' : 'text-amber-400'}">${node.hasInternet ? 'ONLINE' : 'OFF-GRID'}</div>
-          </div>
-        </div>
-
-        <div class="bg-[#141822] border border-[#232936] rounded-xl p-3 space-y-2 text-xs font-mono">
-          <div class="flex items-center justify-between text-[11px]">
-            <div class="flex items-center gap-1 text-emerald-400 font-bold">
-              <span>📍</span> <span>GPS SATELLITE FIX</span>
-            </div>
-            <button onclick="randomizeGps('${node.key}')" class="text-gray-400 hover:text-white text-[10px]">↻ Refresh</button>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <div class="text-[8px] text-gray-400">LATITUDE</div>
-              <div class="font-bold text-white text-[12px]">${node.lat.toFixed(6)}°</div>
-            </div>
-            <div>
-              <div class="text-[8px] text-gray-400">LONGITUDE</div>
-              <div class="font-bold text-white text-[12px]">${node.lon.toFixed(6)}°</div>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2 pt-1 border-t border-gray-800">
-            <button onclick="copyCoordinates(${node.lat}, ${node.lon})" class="py-1 bg-[#1c2230] hover:bg-[#252e42] border border-gray-700 rounded text-[10px] text-white flex items-center justify-center gap-1 font-bold">
-              📋 Copy
-            </button>
-            <button onclick="openInOfficialGoogleMaps(${node.lat}, ${node.lon})" class="py-1 bg-blue-600 hover:bg-blue-500 rounded text-[10px] text-white flex items-center justify-center gap-1 font-bold shadow">
-              🗺️ Google Maps
-            </button>
-          </div>
-        </div>
-
-        <div>
-          <div class="text-[9px] font-mono font-bold text-gray-400 mb-1">BEACON CATEGORY</div>
-          <div class="flex flex-wrap gap-1">
-            ${['GENERAL DISTRESS', 'MEDICAL CRITICAL', 'TRAPPED IN RUBBLE', 'FIRE EVACUATION'].map(cat => `
-              <button onclick="selectCategory('${node.key}', '${cat}')" class="px-2 py-0.5 rounded-full text-[9px] font-bold border transition ${node.selectedCategory === cat ? 'bg-red-600 border-red-500 text-white' : 'bg-[#161c26] border-[#2b3548] text-gray-300'}">
-                ${cat}
-              </button>
-            `).join('')}
-          </div>
-        </div>
-
-        <div class="flex justify-center py-2">
-          <div class="relative w-36 h-36 flex items-center justify-center">
-            <div class="absolute w-36 h-36 rounded-full bg-red-600/20 pulse-outer"></div>
-            <div class="absolute w-30 h-30 rounded-full bg-red-800/40 border border-red-500/50"></div>
-            <button onclick="handleSosButtonClick('${node.key}')" id="sos-btn-${node.key}" class="relative w-24 h-24 rounded-full bg-gradient-to-b from-red-500 via-red-600 to-red-800 border-2 border-white/80 shadow-2xl flex flex-col items-center justify-center text-white active:scale-95 transition cursor-pointer">
-              <span class="text-xl">⚠️</span>
-              <span class="font-black text-lg tracking-wider">SOS</span>
-              <span class="text-[8px] font-bold tracking-widest text-white/90">BROADCAST</span>
-            </button>
-          </div>
-        </div>
-
-        ${isSirenSounding ? `
-          <button onclick="stopEmergencySiren()" class="w-full py-1.5 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs rounded-lg flex items-center justify-center gap-2 shadow">
-            <span>🔇</span> SILENCE SIREN
-          </button>
-        ` : ''}
-
-        <div class="space-y-1.5 pt-1">
-          <div class="flex items-center gap-1 text-[11px] font-bold text-white">
-            <span class="text-red-500">⚠️</span>
-            <span>RECEIVED SOS BEACONS (${sosPackets.length})</span>
-          </div>
-          <div class="space-y-1.5 text-xs max-h-48 overflow-y-auto">
-            ${sosPackets.length === 0 ? 
-              `<div class="p-3 bg-[#141822] rounded-lg text-center text-gray-500 text-[11px]">No distress signals in range.</div>` :
-              sosPackets.map(p => renderPacketCard(p, node.id)).join('')
-            }
-          </div>
-        </div>
-      `;
-    }
-
-    function renderChatTab(node) {
-      const textPackets = node.packets.filter(p => p.packetType === "TEXT_MESSAGE");
-      return `
-        <div class="flex items-center justify-between text-[11px] font-mono text-gray-400">
-          <span>OFF-GRID CHAT CHANNEL</span>
-          <span class="text-emerald-400 font-bold">TTL = 5 Hops</span>
-        </div>
-
-        <div class="flex gap-1 overflow-x-auto pb-1 text-[10px]">
-          <button onclick="sendQuickPhrase('${node.key}', 'I am safe.')" class="whitespace-nowrap px-2 py-0.5 bg-[#141822] border border-gray-700 rounded text-gray-300">I am safe</button>
-          <button onclick="sendQuickPhrase('${node.key}', 'Need water.')" class="whitespace-nowrap px-2 py-0.5 bg-[#141822] border border-gray-700 rounded text-gray-300">Need water</button>
-          <button onclick="sendQuickPhrase('${node.key}', 'Road blocked.')" class="whitespace-nowrap px-2 py-0.5 bg-[#141822] border border-gray-700 rounded text-gray-300">Road blocked</button>
-          <button onclick="sendQuickPhrase('${node.key}', 'Sheltered.')" class="whitespace-nowrap px-2 py-0.5 bg-[#141822] border border-gray-700 rounded text-gray-300">Sheltered</button>
-        </div>
-
-        <div class="h-96 overflow-y-auto space-y-1.5 pr-1">
-          ${textPackets.length === 0 ?
-            `<div class="p-6 bg-[#141822] rounded-xl text-center text-gray-500 text-xs">No mesh messages yet.<br>Broadcast using input below.</div>` :
-            textPackets.map(p => renderPacketCard(p, node.id)).join('')
-          }
-        </div>
-
-        <div class="flex items-center gap-1 pt-1">
-          <input type="text" id="chat-input-${node.key}" placeholder="Type mesh message..." onkeydown="if(event.key==='Enter') sendChatMessage('${node.key}')" class="flex-1 bg-[#141822] border border-[#2b3548] rounded-xl px-2.5 py-1.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-amber-400">
-          <button onclick="sendChatMessage('${node.key}')" class="w-8 h-8 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold flex items-center justify-center transition">
-            ➤
-          </button>
-        </div>
-      `;
-    }
-
-    function renderPeersTab(node) {
-      return `
-        <div class="flex justify-center py-1">
-          <div class="relative w-36 h-36 rounded-full bg-[#131722] border-2 border-emerald-500/40 flex items-center justify-center overflow-hidden">
-            <div class="absolute w-24 h-24 rounded-full border border-emerald-500/30"></div>
-            <div class="absolute w-12 h-12 rounded-full border border-emerald-500/30"></div>
-            <div class="absolute w-full h-px bg-emerald-500/20"></div>
-            <div class="absolute h-full w-px bg-emerald-500/20"></div>
-            <div class="absolute w-36 h-36 radar-beam" style="background: conic-gradient(from 0deg at 50% 50%, rgba(0, 230, 118, 0.4) 0deg, transparent 60deg);"></div>
-            <div class="relative z-10 flex flex-col items-center">
-              <span class="text-emerald-400 text-lg">📡</span>
-              <span class="text-[8px] font-mono font-bold text-emerald-400">P2P SCAN</span>
-            </div>
-            <div class="absolute top-8 left-9 w-2 h-2 rounded-full bg-emerald-400 animate-ping"></div>
-          </div>
-        </div>
-
-        <div>
-          <div class="flex items-center justify-between text-[11px] font-mono mb-1.5">
-            <span class="text-gray-400 font-bold">DIRECT DISCOVERED PEERS</span>
-            <span class="text-emerald-400 font-bold">${node.peers.length} LINKED</span>
-          </div>
-          <div class="space-y-1.5">
-            ${node.peers.map(peerId => {
-              const peerNode = Object.values(nodes).find(n => n.id === peerId);
-              return `
-                <div class="bg-[#141822] border border-[#232936] rounded-xl p-2 flex items-center justify-between text-[11px] font-mono">
-                  <div class="flex items-center gap-1.5">
-                    <span class="text-emerald-400">📶</span>
-                    <div>
-                      <div class="font-bold text-white text-[11px]">${peerNode ? peerNode.name : peerId}</div>
-                      <div class="text-[9px] text-gray-400">${peerId}</div>
-                    </div>
-                  </div>
-                  <div class="text-right">
-                    <div class="text-emerald-400 font-bold text-[9px]">DIRECT HOP</div>
-                    <div class="text-gray-500 text-[9px]">-54 dBm</div>
-                  </div>
-                </div>
-              `;
-            }).join('')}
-          </div>
-        </div>
-      `;
-    }
-
-    function renderLogTab(node) {
-      const syncedCount = node.packets.filter(p => p.isSyncedToCloud).length;
-      return `
-        <div class="flex items-center justify-between text-[11px] font-mono">
-          <span class="font-bold text-white">MULTI-HOP PACKET LOG</span>
-          <span class="text-emerald-400 font-bold">Synced: ${syncedCount}/${node.packets.length}</span>
-        </div>
-
-        <div class="flex gap-1.5">
-          <button onclick="forceCloudSync('${node.key}')" class="flex-1 py-1 bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-[10px] rounded-lg shadow">
-            ☁️ SYNC UPLINK
-          </button>
-          <button onclick="clearPacketLedger('${node.key}')" class="px-2 py-1 bg-red-600/20 text-red-400 border border-red-500/30 text-[10px] rounded-lg font-bold">
-            CLEAR
-          </button>
-        </div>
-
-        <div class="space-y-1.5 max-h-96 overflow-y-auto">
-          ${node.packets.length === 0 ?
-            `<div class="p-6 bg-[#141822] rounded-xl text-center text-gray-500 text-xs">No packets in local Room database.</div>` :
-            node.packets.map(p => renderPacketCard(p, node.id, true)).join('')
-          }
-        </div>
-      `;
-    }
-
-    function renderPacketCard(p, localId, isDetailed = false) {
-      const isSos = p.packetType === "SOS_ALERT";
-      const isMine = p.senderId === localId;
-      const hopCount = p.hopPath ? p.hopPath.split(',').length : 1;
-      const hopText = hopCount === 1 ? "Direct Hop" : `${hopCount} Hops (${p.hopPath.replace(/,/g, ' → ')})`;
-
-      return `
-        <div class="p-2.5 rounded-xl border ${isSos ? 'bg-red-950/30 border-red-500/60' : 'bg-[#141822] border-[#232936]'} space-y-1 text-xs">
-          <div class="flex items-center justify-between font-mono text-[9px]">
-            <div class="flex items-center gap-1 font-bold ${isSos ? 'text-red-400' : (isMine ? 'text-emerald-400' : 'text-gray-300')}">
-              <span>${isSos ? '⚠️ EMERGENCY SOS' : (isMine ? 'YOU' : p.senderId)}</span>
-            </div>
-            <div class="flex items-center gap-1 text-gray-400">
-              <span>${new Date(p.timestamp).toLocaleTimeString()}</span>
-              <span>${p.isSyncedToCloud ? '☁️' : '⏳'}</span>
-            </div>
-          </div>
-
-          <div class="text-white text-[11px] ${isSos ? 'font-bold' : ''}">${p.payload}</div>
-
-          <div class="flex items-center justify-between text-[9px] font-mono text-gray-400 pt-0.5 border-t border-gray-800">
-            <span class="bg-[#1e2533] px-1.5 py-0.5 rounded text-gray-300">${hopText}</span>
-            <span>TTL: ${p.ttl}</span>
-          </div>
-
-          ${p.latitude ? `
-            <div class="text-[9px] font-mono text-emerald-400 flex items-center justify-between pt-0.5">
-              <span>GPS: ${p.latitude.toFixed(5)}, ${p.longitude.toFixed(5)}</span>
-              <button onclick="openInOfficialGoogleMaps(${p.latitude}, ${p.longitude})" class="text-blue-400 hover:text-blue-300 font-bold underline">
-                Open in Google Maps ↗
-              </button>
-            </div>
-          ` : ''}
-        </div>
-      `;
-    }
-
-    function selectCategory(nodeKey, category) {
-      nodes[nodeKey].selectedCategory = category;
-      if (viewMode === 'multi') renderAllPhones(); else renderSinglePhone(nodeKey, 'phone-frame-focused');
-    }
-
-    function sendQuickPhrase(nodeKey, phrase) {
-      const input = document.getElementById(`chat-input-${nodeKey}`);
-      if (input) input.value = phrase;
-      sendChatMessage(nodeKey);
-    }
-
-    function sendChatMessage(nodeKey) {
-      const input = document.getElementById(`chat-input-${nodeKey}`);
-      const text = input ? input.value.trim() : "";
-      if (!text) return;
-      if (input) input.value = "";
-
-      const node = nodes[nodeKey];
-      const packet = {
-        packetId: "msg-" + Math.random().toString(36).substring(2, 9),
-        senderId: node.id,
-        packetType: "TEXT_MESSAGE",
-        payload: text,
-        latitude: node.lat,
-        longitude: node.lon,
-        timestamp: Date.now(),
-        ttl: 5,
-        hopPath: node.id,
-        isSyncedToCloud: false
-      };
-
-      logTrace(`💬 [${node.id}] SENT CHAT MESSAGE: "${text}"`);
-      routePacket(packet, nodeKey, null);
-    }
-
-    function randomizeGps(nodeKey) {
-      nodes[nodeKey].lat += (Math.random() - 0.5) * 0.003;
-      nodes[nodeKey].lon += (Math.random() - 0.5) * 0.003;
-      updateMapCoordinatesDisplay();
-      logTrace(`Refreshed GPS for ${nodes[nodeKey].id}`);
-      if (viewMode === 'multi') renderAllPhones(); else renderSinglePhone(nodeKey, 'phone-frame-focused');
-    }
-
-    function copyCoordinates(lat, lon) {
-      navigator.clipboard.writeText(`${lat}, ${lon}`);
-      showToast(`Coordinates copied: ${lat.toFixed(6)}, ${lon.toFixed(6)}`);
-    }
-
-    function toggleNodeCInternet() {
-      const chk = document.getElementById('chk-node-c-internet');
-      nodes.nodeC.hasInternet = chk.checked;
-      const pill = document.getElementById('gateway-status-pill');
-      pill.innerText = chk.checked ? "ONLINE" : "OFFLINE";
-      pill.className = `text-[10px] px-1.5 py-0.5 rounded font-bold ${chk.checked ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`;
-      logTrace(`Node C Internet Uplink set to ${chk.checked ? 'ONLINE' : 'OFFLINE'}`);
-
-      if (chk.checked) {
-        forceCloudSync('nodeC');
-      }
-      if (viewMode === 'multi') renderAllPhones(); else renderSinglePhone(focusedNodeKey, 'phone-frame-focused');
-    }
-
-    function forceCloudSync(nodeKey) {
-      const node = nodes[nodeKey];
-      if (!node.hasInternet) {
-        alert("This node does not have an internet uplink. Turn ON Node C Internet Uplink!");
-        return;
-      }
-      let count = 0;
-      node.packets.forEach(p => {
-        if (!p.isSyncedToCloud) {
-          p.isSyncedToCloud = true;
-          count++;
-        }
-      });
-      showToast(`☁️ Cloud Upload Complete: ${count} packets acknowledged.`);
-      logTrace(`☁️ [${node.id}] Synced ${count} packets to cloud server.`);
-      if (viewMode === 'multi') renderAllPhones(); else renderSinglePhone(nodeKey, 'phone-frame-focused');
-    }
-
-    function clearPacketLedger(nodeKey) {
-      nodes[nodeKey].packets = [];
-      showToast(`Packet log cleared on ${nodes[nodeKey].id}`);
-      if (viewMode === 'multi') renderAllPhones(); else renderSinglePhone(nodeKey, 'phone-frame-focused');
-    }
-
-    function logTrace(msg) {
-      const now = new Date().toTimeString().split(' ')[0];
-      const tracer = document.getElementById('tracer-log');
-      if (!tracer) return;
-      const row = document.createElement('div');
-      row.className = "text-gray-300";
-      row.innerHTML = `<span class="text-gray-500">[${now}]</span> ${msg}`;
-      tracer.insertBefore(row, tracer.firstChild);
-    }
-
-    function clearTracerLog() {
-      const el = document.getElementById('tracer-log');
-      if (el) el.innerHTML = "";
-    }
-
-    function showToast(msg) {
-      const toast = document.getElementById('toast');
-      if (!toast) return;
-      toast.innerText = msg;
-      toast.classList.remove('opacity-0', 'pointer-events-none');
-      toast.classList.add('opacity-100');
-      setTimeout(() => {
-        toast.classList.remove('opacity-100');
-        toast.classList.add('opacity-0', 'pointer-events-none');
-      }, 3000);
-    }
-
-    // --- PWA INSTALLATION & SERVICE WORKER ---
-    let deferredPwaPrompt = null;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPwaPrompt = e;
-      const btn = document.getElementById('btn-pwa-install');
-      if (btn) {
-        btn.classList.add('animate-bounce');
-      }
-      logTrace("PWA Ready: App can be installed to your Desktop or Mobile Home Screen!");
+  } else {
+    showToast('Open in Chrome/Edge, tap menu (⋮) → "Install App" or "Add to Home Screen".');
+    openShareModal();
+  }
+}
+
+// ─── SERVICE WORKER (100% OFFLINE) ────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      logTrace('Service Worker active — 100% Offline cache enabled.');
+    }).catch(err => {
+      // SW may fail on file:// — OK, app still works
+      logTrace('Service Worker note: ' + (err.message || err));
     });
+  });
+}
 
-    function triggerPwaInstall() {
-      if (deferredPwaPrompt) {
-        deferredPwaPrompt.prompt();
-        deferredPwaPrompt.userChoice.then((choiceResult) => {
-          if (choiceResult.outcome === 'accepted') {
-            showToast("✅ App installed to device! Check your Apps drawer/Desktop.");
-            logTrace("User accepted native PWA installation.");
-          }
-          deferredPwaPrompt = null;
-        });
-      } else {
-        showToast("To install: Open in Chrome/Edge, click browser menu (⋮) > 'Install App' or double-click install_desktop_app.bat!");
-        openShareModal();
-      }
-    }
-
-    // Register Service Worker for 100% Offline Caching
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').then((reg) => {
-          console.log('[PWA] Service Worker registered with scope:', reg.scope);
-          logTrace("Service Worker: Active (100% Offline Cache Enabled).");
-        }).catch((err) => {
-          console.log('[PWA] Service Worker registration note:', err);
-        });
+// ─── NOTIFICATION PERMISSION (for SOS alerts on recipients) ───────────────
+window.addEventListener('DOMContentLoaded', () => {
+  if ('Notification' in window && Notification.permission === 'default') {
+    setTimeout(() => {
+      Notification.requestPermission().then(perm => {
+        logTrace('Browser Notification permission: ' + perm + ' (used for SOS alerts on recipient devices).');
       });
-    }
-  </script>
+    }, 2500);
+  }
+});
+</script>
 </body>
 </html>
