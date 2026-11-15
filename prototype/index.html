@@ -4,6 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Off-Grid SOS Mesh - Live Multi-Device Command Center</title>
+  
+  <!-- PWA & Mobile Web App Manifest -->
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="./icon-192.svg">
+  <link rel="apple-touch-icon" href="./icon-192.svg">
+  <meta name="theme-color" content="#FF1744">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SOS Mesh">
+  
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
   <style>
     @keyframes radarSweep {
@@ -108,6 +119,11 @@
         <!-- Shareable LAN & Offline Modal -->
         <button onclick="openShareModal()" class="px-3 py-1.5 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 rounded-lg text-xs font-mono flex items-center gap-1.5 transition font-bold">
           <span>📲</span> <span>Share / Open on Phone</span>
+        </button>
+
+        <!-- Install as Native App Button -->
+        <button id="btn-pwa-install" onclick="triggerPwaInstall()" class="px-3.5 py-1.5 bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white rounded-lg text-xs font-mono flex items-center gap-1.5 transition font-black shadow-lg">
+          <span>📥</span> <span>INSTALL APP ON DEVICE</span>
         </button>
 
       </div>
@@ -1305,6 +1321,46 @@
         toast.classList.remove('opacity-100');
         toast.classList.add('opacity-0', 'pointer-events-none');
       }, 3000);
+    }
+
+    // --- PWA INSTALLATION & SERVICE WORKER ---
+    let deferredPwaPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPwaPrompt = e;
+      const btn = document.getElementById('btn-pwa-install');
+      if (btn) {
+        btn.classList.add('animate-bounce');
+      }
+      logTrace("PWA Ready: App can be installed to your Desktop or Mobile Home Screen!");
+    });
+
+    function triggerPwaInstall() {
+      if (deferredPwaPrompt) {
+        deferredPwaPrompt.prompt();
+        deferredPwaPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            showToast("✅ App installed to device! Check your Apps drawer/Desktop.");
+            logTrace("User accepted native PWA installation.");
+          }
+          deferredPwaPrompt = null;
+        });
+      } else {
+        showToast("To install: Open in Chrome/Edge, click browser menu (⋮) > 'Install App' or double-click install_desktop_app.bat!");
+        openShareModal();
+      }
+    }
+
+    // Register Service Worker for 100% Offline Caching
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then((reg) => {
+          console.log('[PWA] Service Worker registered with scope:', reg.scope);
+          logTrace("Service Worker: Active (100% Offline Cache Enabled).");
+        }).catch((err) => {
+          console.log('[PWA] Service Worker registration note:', err);
+        });
+      });
     }
   </script>
 </body>

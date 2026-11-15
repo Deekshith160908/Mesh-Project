@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e0509"/>
+      <stop offset="50%" stop-color="#0a0c10"/>
+      <stop offset="100%" stop-color="#001408"/>
+    </linearGradient>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FF5252"/>
+      <stop offset="50%" stop-color="#FF1744"/>
+      <stop offset="100%" stop-color="#B71C1C"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background rounded rect -->
+  <rect width="192" height="192" rx="42" fill="url(#bgGrad)"/>
+  <rect width="188" height="188" x="2" y="2" rx="40" fill="none" stroke="#FF1744" stroke-width="2" opacity="0.6"/>
+
+  <!-- Radio Waves -->
+  <circle cx="96" cy="96" r="64" fill="none" stroke="#FF9100" stroke-width="2.5" stroke-dasharray="4 6" opacity="0.5"/>
+  <circle cx="96" cy="96" r="78" fill="none" stroke="#00E676" stroke-width="2" stroke-dasharray="6 8" opacity="0.4"/>
+
+  <!-- Emergency Shield Shape -->
+  <path d="M96 28 L142 50 C142 98 122 136 96 156 C70 136 50 98 50 50 Z" fill="url(#shieldGrad)" stroke="#FFFFFF" stroke-width="3"/>
+
+  <!-- Center Lightning Bolt -->
+  <path d="M101 46 L76 92 L94 92 L89 138 L118 84 L99 84 Z" fill="#FFFFFF" stroke="#FFD600" stroke-width="1.5"/>
+
+  <!-- Mesh Nodes Dots -->
+  <circle cx="48" cy="144" r="7" fill="#00E676" stroke="#FFFFFF" stroke-width="2"/>
+  <circle cx="144" cy="144" r="7" fill="#00E676" stroke="#FFFFFF" stroke-width="2"/>
+  <line x1="48" y1="144" x2="84" y2="148" stroke="#00E676" stroke-width="2" stroke-dasharray="3 3"/>
+  <line x1="144" y1="144" x2="108" y2="148" stroke="#00E676" stroke-width="2" stroke-dasharray="3 3"/>
+</svg>

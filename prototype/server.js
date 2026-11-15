@@ -10,6 +10,7 @@ const MIME_TYPES = {
     '.js': 'text/javascript; charset=utf-8',
     '.css': 'text/css; charset=utf-8',
     '.json': 'application/json; charset=utf-8',
+    '.webmanifest': 'application/manifest+json; charset=utf-8',
     '.png': 'image/png',
     '.jpg': 'image/jpeg',
     '.svg': 'image/svg+xml',
@@ -19,7 +20,6 @@ const MIME_TYPES = {
 const server = http.createServer((req, res) => {
     let filePath = path.join(PUBLIC_DIR, req.url === '/' ? 'index.html' : req.url.split('?')[0]);
     
-    // Safety check: ensure file path stays inside public directory
     if (!filePath.startsWith(PUBLIC_DIR)) {
         res.writeHead(403);
         res.end('Access Denied');
